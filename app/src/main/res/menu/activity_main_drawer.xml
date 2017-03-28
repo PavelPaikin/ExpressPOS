@@ -1,36 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/nav_group">
         <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
+            android:id="@+id/nav_pos"
+            android:icon="@drawable/ic_shopping_cart_black_24dp"
+            android:title="POS" />
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
+            android:id="@+id/nav_inventory"
+            android:icon="@drawable/ic_store_black_24dp"
+            android:title="Inventory" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:id="@+id/nav_orders"
+            android:icon="@drawable/ic_history_black_24dp"
+            android:title="Orders" />
+
     </group>
 
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
-        </menu>
-    </item>
+
+    <group
+        android:checkableBehavior="none"
+        android:id="@+id/nav_bottom">
+        <item
+            android:id="@+id/nav_share"
+            android:icon="@drawable/ic_arrow_back_black_24dp"
+            android:title="Log Out" />
+
+    </group>
+
 
 </menu>
