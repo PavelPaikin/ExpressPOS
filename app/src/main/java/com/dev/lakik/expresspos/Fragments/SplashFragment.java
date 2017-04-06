@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -65,6 +66,8 @@ public class SplashFragment extends Fragment {
     ImageView logo;
     EditText loginET, passwordET;
     CheckBox rememberCheck;
+    Button loginButton;
+
     ArrayList<View> slideInArray; //an array of objects that should slide into view
 
     @Override
@@ -88,16 +91,19 @@ public class SplashFragment extends Fragment {
         loginET = (EditText) view.findViewById(R.id.loginEdittext);
         passwordET = (EditText) view.findViewById(R.id.passwordEdittext);
         rememberCheck = (CheckBox) view.findViewById(R.id.remembermeCheck);
+        loginButton = (Button) view.findViewById(R.id.loginButton);
 
         //Add the edit texts and buttons to the array
         slideInArray.add(loginET);
         slideInArray.add(passwordET);
         slideInArray.add(rememberCheck);
+        slideInArray.add(loginButton);
 
         //Position objects offscreen
         loginET.setX(width + 10);
         passwordET.setX(width + 10);
         rememberCheck.setX(width + 10);
+        loginButton.setX(width + 10);
 
         //Fade the logo into view
         Animation logoAnim = AnimationUtils.loadAnimation(this.getContext(), R.anim.fade_in);
@@ -110,7 +116,6 @@ public class SplashFragment extends Fragment {
             }
 
             public void onFinish() {
-                System.out.println("MOVING UP");
                 AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(), R.animator.move_up);
                 set.setTarget(logo);
                 set.start();
