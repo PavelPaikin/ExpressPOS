@@ -72,8 +72,6 @@ public class SplashFragment extends Fragment {
     CheckBox rememberCheck;
     Button loginButton, registerButton;
 
-    Button fakeUserButton;
-
     ArrayList<View> slideInArray; //an array of objects that should slide into view
 
     boolean validLogin;
@@ -103,8 +101,6 @@ public class SplashFragment extends Fragment {
         rememberCheck = (CheckBox) view.findViewById(R.id.remembermeCheck);
         loginButton = (Button) view.findViewById(R.id.loginButton);
         registerButton = (Button) view.findViewById(R.id.registerButton);
-
-        fakeUserButton = (Button) view.findViewById(R.id.createUserButton);
 
         //Add the edit texts and buttons to the array
         slideInArray.add(loginET);
@@ -179,10 +175,8 @@ public class SplashFragment extends Fragment {
 
                 if (validLogin) {
                     // TODO: 4/5/2017 Redirect user to the homepage screen
+                    System.out.println("VALID LOGIN");
                 } else {
-                    // TODO: 4/5/2017 Set the color's to more appealing ones, maybe play an animation...
-                    loginET.setBackgroundColor(Color.rgb(255, 0, 0));
-                    passwordET.setBackgroundColor(Color.rgb(255, 0, 0));
                     passwordET.setText("");
                     passwordET.setHint("Incorrect Login Details");
                 }
@@ -197,13 +191,6 @@ public class SplashFragment extends Fragment {
             }
         });
 
-
-        fakeUserButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CompanyHelper.create(null, "Evan", "Evan", "evan@website.ca", "password", "images");
-            }
-        });
 
 
         return view;

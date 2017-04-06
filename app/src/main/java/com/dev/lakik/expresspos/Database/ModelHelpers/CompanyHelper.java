@@ -20,7 +20,7 @@ public class CompanyHelper {
 
     //Define all columns and their type
     public static String NAME_COLUMN_ID = "id";
-    public static String TYPE_COLUMN_ID = "int";
+    public static String TYPE_COLUMN_ID = "text";
 
     public static String NAME_COLUMN_NAME = "name";
     public static String TYPE_COLUMN_NAME = "text";
@@ -46,7 +46,7 @@ public class CompanyHelper {
         sb.append("CREATE TABLE ");
         sb.append(TABLE_NAME);
         sb.append(" (");
-        sb.append(NAME_COLUMN_ID + " " + TYPE_COLUMN_ID + " AUTOINCREMENT primary key, ");
+        sb.append(NAME_COLUMN_ID + " " + TYPE_COLUMN_ID + " primary key, ");
         sb.append(NAME_COLUMN_NAME + " " + TYPE_COLUMN_NAME + ", ");
         sb.append(NAME_COLUMN_LOGIN + " " + TYPE_COLUMN_LOGIN + ", ");
         sb.append(NAME_COLUMN_PASSWORD + " " + TYPE_COLUMN_PASSWORD + ", ");
@@ -102,22 +102,6 @@ public class CompanyHelper {
         return item;
     }
 
-
-    public static void create(String id, String name, String login, String email, String password, String imagePath) {
-
-        SQLiteDatabase db = DBHelper.Instance().getDB();
-        System.out.println("INSERT INTO " + TABLE_NAME + " (" + NAME_COLUMN_ID + ", " + NAME_COLUMN_NAME + ", " + NAME_COLUMN_LOGIN
-                + ", " + NAME_COLUMN_EMAIL + ", " + NAME_COLUMN_PASSWORD + ", " + NAME_COLUMN_IMAGE_PATH
-                + ") VALUES (" + id + ", " + name + ", " + login + ", " + email + ", " + password + ", " + imagePath + ");");
-
-
-        db.execSQL("INSERT INTO " + TABLE_NAME + " (" + NAME_COLUMN_ID + ", " + NAME_COLUMN_NAME + ", " + NAME_COLUMN_LOGIN
-                + ", " + NAME_COLUMN_EMAIL + ", " + NAME_COLUMN_PASSWORD + ", " + NAME_COLUMN_IMAGE_PATH
-                + ") VALUES ('" + id + "', '" + name + "', '" + login + "', '" + email + "', '" + password + "', '" + imagePath + "');");
-
-        System.out.println("SUBMITTED VALUES TO DATABASE");
-
-    }
 
 
     public static void logCursor(Cursor c) {
