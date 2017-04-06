@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.dev.lakik.expresspos.Fragments.LoginFragment;
+import com.dev.lakik.expresspos.Fragments.RegisterFragment;
 import com.dev.lakik.expresspos.Fragments.SplashFragment;
 
 import com.dev.lakik.expresspos.Database.DBHelper;
@@ -28,7 +29,8 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         LoginFragment.OnFragmentInteractionListener,
-        SplashFragment.OnFragmentInteractionListener {
+        SplashFragment.OnFragmentInteractionListener,
+        RegisterFragment.OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

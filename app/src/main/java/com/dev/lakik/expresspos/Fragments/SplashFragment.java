@@ -4,6 +4,7 @@ import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.media.Image;
 import android.net.Uri;
@@ -22,6 +23,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.dev.lakik.expresspos.Database.DBHelper;
+import com.dev.lakik.expresspos.Database.ModelHelpers.CompanyHelper;
+import com.dev.lakik.expresspos.Model.Company;
 import com.dev.lakik.expresspos.R;
 
 import org.w3c.dom.Text;
@@ -66,15 +70,21 @@ public class SplashFragment extends Fragment {
     ImageView logo;
     EditText loginET, passwordET;
     CheckBox rememberCheck;
-    Button loginButton;
+    Button loginButton, registerButton;
+
+    Button fakeUserButton;
 
     ArrayList<View> slideInArray; //an array of objects that should slide into view
+
+    boolean validLogin;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_splash, container, false);
+
+        new DBHelper(this.getActivity());
 
         //Get display size to position items off screen
         Display display = this.getActivity().getWindowManager().getDefaultDisplay();
@@ -92,6 +102,9 @@ public class SplashFragment extends Fragment {
         passwordET = (EditText) view.findViewById(R.id.passwordEdittext);
         rememberCheck = (CheckBox) view.findViewById(R.id.remembermeCheck);
         loginButton = (Button) view.findViewById(R.id.loginButton);
+        registerButton = (Button) view.findViewById(R.id.registerButton);
+
+        fakeUserButton = (Button) view.findViewById(R.id.createUserButton);
 
         //Add the edit texts and buttons to the array
         slideInArray.add(loginET);
@@ -104,6 +117,7 @@ public class SplashFragment extends Fragment {
         passwordET.setX(width + 10);
         rememberCheck.setX(width + 10);
         loginButton.setX(width + 10);
+        registerButton.setX(width + 110);
 
         //Fade the logo into view
         Animation logoAnim = AnimationUtils.loadAnimation(this.getContext(), R.anim.fade_in);
@@ -134,12 +148,62 @@ public class SplashFragment extends Fragment {
                     set.setTarget(slideInArray.get(i));
                     set.start();
                 }
+
+                AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(), R.animator.move_left_less);
+                set.setTarget(registerButton);
+                set.start();
             }
         }.start();
 
 
 
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
+                String login = loginET.getText().toString();
+                String password = passwordET.getText().toString();
+
+                ArrayList<Company> companyArray;
+                companyArray = CompanyHelper.getAllRecords();
+                System.out.println(companyArray);
+
+                for (Company item : companyArray) {
+                    if ((item.getLogin().equalsIgnoreCase(login)) && (item.getPassword().equals(password))) {
+                        validLogin = true;
+                        break;
+                    } else {
+                        validLogin = false;
+                    }
+                }
+
+                if (validLogin) {
+                    // TODO: 4/5/2017 Redirect user to the homepage screen
+                } else {
+                    // TODO: 4/5/2017 Set the color's to more appealing ones, maybe play an animation...
+                    loginET.setBackgroundColor(Color.rgb(255, 0, 0));
+                    passwordET.setBackgroundColor(Color.rgb(255, 0, 0));
+                    passwordET.setText("");
+                    passwordET.setHint("Incorrect Login Details");
+                }
+
+            }
+        });
+
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().getSupportFragmentManager().beginTransaction().addToBackStack(null).replace(R.id.main_content, new RegisterFragment()).commit();
+            }
+        });
+
+
+        fakeUserButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CompanyHelper.create(null, "Evan", "Evan", "evan@website.ca", "password", "images");
+            }
+        });
 
 
         return view;
