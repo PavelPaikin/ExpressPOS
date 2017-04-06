@@ -1,8 +1,16 @@
 package com.dev.lakik.expresspos;
 
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
+import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,16 +21,32 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.dev.lakik.expresspos.CustomView.ControllableAppBarLayout;
 import com.dev.lakik.expresspos.Database.DBHelper;
+import com.dev.lakik.expresspos.Fragments.CreateProductFragment;
+import com.dev.lakik.expresspos.Fragments.InventoryFragment;
+import com.dev.lakik.expresspos.Fragments.OrdersFragment;
+import com.dev.lakik.expresspos.Fragments.POSFragment;
 import com.dev.lakik.expresspos.Model.Company;
+import com.dev.lakik.expresspos.Model.Const;
 import com.dev.lakik.expresspos.Model.Inventory;
 import com.dev.lakik.expresspos.Model.Product;
 import com.dev.lakik.expresspos.Model.ProductImage;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        InventoryFragment.OnFragmentInteractionListener,
+        CreateProductFragment.OnFragmentInteractionListener,
+        POSFragment.OnFragmentInteractionListener,
+        OrdersFragment.OnFragmentInteractionListener{
+
+    CollapsingToolbarLayout collapsingToolbarLayout = null;
+    ControllableAppBarLayout appBarLayout = null;
+    Fragment currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,14 +58,11 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        collapsingToolbarLayout = (CollapsingToolbarLayout)findViewById(R.id.collapsingToolbar);
+
+        appBarLayout = (ControllableAppBarLayout)findViewById(R.id.controlledAppBar);
+        appBarLayout.collapseToolbar();
+        appBarLayout.lockToolbar();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -52,6 +73,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        changeFragment(POSFragment.newInstance(), false);
+        collapsingToolbarLayout.setTitle("POS");
     }
 
     @Override
@@ -61,24 +84,23 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+
+            if(currentFragment instanceof CreateProductFragment) {
+                appBarLayout.collapseToolbar();
+            }
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        //getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -89,25 +111,58 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
-/*
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        switch (id){
+            case R.id.nav_pos:
+                changeFragment(POSFragment.newInstance(), false);
+                appBarLayout.collapseToolbar();
+                collapsingToolbarLayout.setTitle("POS");
+                break;
+            case R.id.nav_inventory:
+                changeFragment(InventoryFragment.newInstance(), false);
+                appBarLayout.collapseToolbar();
+                collapsingToolbarLayout.setTitle("Inventory");
+                break;
+            case R.id.nav_orders:
+                changeFragment(OrdersFragment.newInstance(), false);
+                appBarLayout.collapseToolbar();
+                collapsingToolbarLayout.setTitle("Orders");
+                break;
         }
-*/
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+
+
+    public void changeFragment(Fragment fragment, boolean addToStack){
+
+        currentFragment = fragment;
+
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+
+        if(fragment!=null) {
+            if(addToStack) transaction.addToBackStack(null);
+            transaction.setCustomAnimations(R.anim.enter, R.anim.exit);
+            transaction.replace(R.id.mainContainer, fragment);
+            transaction.commit();
+        }
+    }
+
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        switch (uri.toString()){
+            case Const.CREATE_NEW_PRODUCT_FRAGMENT:
+                changeFragment(CreateProductFragment.newInstance(), true);
+                appBarLayout.collapseToolbar();
+                collapsingToolbarLayout.setTitle("");
+                break;
+
+        }
     }
 }
