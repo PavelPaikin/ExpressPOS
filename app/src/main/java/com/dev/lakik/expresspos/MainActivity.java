@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity
         LoginFragment.OnFragmentInteractionListener,
         SplashFragment.OnFragmentInteractionListener,
         RegisterFragment.OnFragmentInteractionListener,
-        NavigationView.OnNavigationItemSelectedListener,
         InventoryFragment.OnFragmentInteractionListener,
         CreateProductFragment.OnFragmentInteractionListener,
         POSFragment.OnFragmentInteractionListener,
@@ -84,7 +83,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new SplashFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new SplashFragment()).commit();
 
 
     }
