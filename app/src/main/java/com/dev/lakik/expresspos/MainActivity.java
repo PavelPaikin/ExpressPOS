@@ -17,6 +17,14 @@ import android.view.MenuItem;
 import com.dev.lakik.expresspos.Fragments.LoginFragment;
 import com.dev.lakik.expresspos.Fragments.SplashFragment;
 
+import com.dev.lakik.expresspos.Database.DBHelper;
+import com.dev.lakik.expresspos.Model.Company;
+import com.dev.lakik.expresspos.Model.Inventory;
+import com.dev.lakik.expresspos.Model.Product;
+import com.dev.lakik.expresspos.Model.ProductImage;
+
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         LoginFragment.OnFragmentInteractionListener,
@@ -28,9 +36,7 @@ public class MainActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_main);
 
-        //setContentView(R.layout.login);
-
-
+        new DBHelper(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -54,6 +60,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         getSupportFragmentManager().beginTransaction().replace(R.id.main_content, new SplashFragment()).commit();
+
 
     }
 
