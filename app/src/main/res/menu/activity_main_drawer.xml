@@ -24,6 +24,10 @@
         android:checkableBehavior="none"
         android:id="@+id/nav_bottom">
         <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings_black_24dp"
+            android:title="Settings" />
+        <item
             android:id="@+id/nav_share"
             android:icon="@drawable/ic_arrow_back_black_24dp"
             android:title="Log Out" />
