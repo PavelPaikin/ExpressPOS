@@ -102,6 +102,8 @@ public class CompanyHelper {
         return item;
     }
 
+
+
     public static void logCursor(Cursor c) {
         if (c != null) {
             if (c.moveToFirst()) {

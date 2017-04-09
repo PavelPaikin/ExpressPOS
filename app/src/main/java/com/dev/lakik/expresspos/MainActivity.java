@@ -21,6 +21,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.dev.lakik.expresspos.Fragments.LoginFragment;
+import com.dev.lakik.expresspos.Fragments.RegisterFragment;
+import com.dev.lakik.expresspos.Fragments.SplashFragment;
+
 import com.dev.lakik.expresspos.CustomView.ControllableAppBarLayout;
 import com.dev.lakik.expresspos.Database.DBHelper;
 import com.dev.lakik.expresspos.Fragments.CreateProductFragment;
@@ -39,10 +43,13 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
+        LoginFragment.OnFragmentInteractionListener,
+        SplashFragment.OnFragmentInteractionListener,
+        RegisterFragment.OnFragmentInteractionListener,
         InventoryFragment.OnFragmentInteractionListener,
         CreateProductFragment.OnFragmentInteractionListener,
         POSFragment.OnFragmentInteractionListener,
-        OrdersFragment.OnFragmentInteractionListener{
+        OrdersFragment.OnFragmentInteractionListener {
 
     CollapsingToolbarLayout collapsingToolbarLayout = null;
     ControllableAppBarLayout appBarLayout = null;
@@ -54,6 +61,9 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         new DBHelper(this);
+
+
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -73,8 +83,9 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        changeFragment(POSFragment.newInstance(), false);
-        collapsingToolbarLayout.setTitle("POS");
+        getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new SplashFragment()).commit();
+
+
     }
 
     @Override
@@ -135,8 +146,6 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
-
 
     public void changeFragment(Fragment fragment, boolean addToStack){
 
