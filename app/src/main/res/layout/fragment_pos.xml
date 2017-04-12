@@ -6,11 +6,12 @@
     tools:context="com.dev.lakik.expresspos.Fragments.POSFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
 
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/pos_recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/inventory_fam"
