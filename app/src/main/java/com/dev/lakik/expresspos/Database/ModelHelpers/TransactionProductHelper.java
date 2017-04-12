@@ -65,10 +65,10 @@ public class TransactionProductHelper {
         Cursor c = db.rawQuery("Select * from " + TABLE_NAME + " where " + NAME_COLUMN_TRANSACTION_ID + "= '" + id + "'", null);
         while(c.moveToNext()){
             TransactionProduct item = new TransactionProduct();
-            item.setTransactionId(UUID.fromString(c.getString(0)));
-            item.setProductId(UUID.fromString(c.getString(1)));
-            item.setPrice(c.getFloat(2));
-            item.setAmount(c.getInt(3));
+            item.setTransactionId(UUID.fromString(c.getString(c.getColumnIndex(NAME_COLUMN_TRANSACTION_ID))));
+            item.setProductId(UUID.fromString(c.getString(c.getColumnIndex(NAME_COLUMN_PRODUCT_ID))));
+            item.setPrice(c.getFloat(c.getColumnIndex(NAME_COLUMN_PRICE)));
+            item.setAmount(c.getInt(c.getColumnIndex(NAME_COLUMN_AMOUNT)));
 
             item.loadProduct();
 
