@@ -6,11 +6,21 @@
 
     <string name="action_settings">Settings</string>
     <string name="remembermetext">Remember me</string>
+    <string name="action_submit">Submit</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="scan_product">Scan Product</string>
     <string name="create_new_product">Create New Product</string>
     <string name="select_from_list">Select from list</string>
 
 
     <string name="hello_blank_fragment">BLANK FRAGMENT</string>
+
+    <string name="product_name">Product Name</string>
+    <string name="product_number">Product Number</string>
+    <string name="upc">UPC</string>
+    <string name="description">Description</string>
+    <string name="amount">Amount</string>
+    <string name="price">Price</string>
 
 </resources>
