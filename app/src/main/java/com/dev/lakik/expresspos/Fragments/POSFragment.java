@@ -56,8 +56,8 @@ public class POSFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_pos, container, false);
 
         //Don't brute force products, this is for testing. Array list should be populated with the database
-        prodArray.add(new Product("Planters Peanuts", "05871697076", "Dry roasted peanuts", 2.99));
-        prodArray.add(new Product("No Name Peanuts", "46721828384", "Cheaper dry roasted peanuts", 1.99));
+        prodArray.add(new Product("Planters Peanuts", "102746", "05871697076", "Dry roasted peanuts", 2.99));
+        prodArray.add(new Product("No Name Peanuts", "487576", "46721828384", "Cheaper dry roasted peanuts", 1.99));
         //End Testing code
 
         rv = (RecyclerView) view.findViewById(R.id.pos_recyclerView);
