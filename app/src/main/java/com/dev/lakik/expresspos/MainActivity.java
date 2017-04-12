@@ -1,5 +1,6 @@
 package com.dev.lakik.expresspos;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -43,9 +44,6 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        LoginFragment.OnFragmentInteractionListener,
-        SplashFragment.OnFragmentInteractionListener,
-        RegisterFragment.OnFragmentInteractionListener,
         InventoryFragment.OnFragmentInteractionListener,
         CreateProductFragment.OnFragmentInteractionListener,
         POSFragment.OnFragmentInteractionListener,
@@ -83,7 +81,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new SplashFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new POSFragment()).commit();
 
 
     }
@@ -140,6 +138,9 @@ public class MainActivity extends AppCompatActivity
                 appBarLayout.collapseToolbar();
                 collapsingToolbarLayout.setTitle("Orders");
                 break;
+            case R.id.nav_logout:
+                Intent intent = new Intent(this, SplashActivity.class);
+                startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
