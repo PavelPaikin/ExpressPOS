@@ -56,8 +56,8 @@ public class ProductImageHelper {
         Cursor c = db.query(TABLE_NAME, null, null, null, null, null, NAME_COLUMN_PRODUCT_ID + " DESC");
         while(c.moveToNext()){
             ProductImage item = new ProductImage();
-            item.setProduct_id(UUID.fromString(c.getString(0)));
-            item.setImagePath(c.getString(1));
+            item.setProduct_id(UUID.fromString(c.getString(c.getColumnIndex(NAME_COLUMN_PRODUCT_ID))));
+            item.setImagePath(c.getString(c.getColumnIndex(NAME_COLUMN_IMAGE_PATH)));
 
             tempArray.add(item);
         }
@@ -73,8 +73,8 @@ public class ProductImageHelper {
         Cursor c = db.rawQuery("Select * from " + TABLE_NAME + " where " + NAME_COLUMN_PRODUCT_ID + "= '" + id + "'", null);
         while(c.moveToNext()){
             ProductImage item = new ProductImage();
-            item.setProduct_id(UUID.fromString(c.getString(0)));
-            item.setImagePath(c.getString(1));
+            item.setProduct_id(UUID.fromString(c.getString(c.getColumnIndex(NAME_COLUMN_PRODUCT_ID))));
+            item.setImagePath(c.getString(c.getColumnIndex(NAME_COLUMN_IMAGE_PATH)));
 
             tempArray.add(item);
         }

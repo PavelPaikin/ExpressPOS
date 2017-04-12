@@ -26,6 +26,9 @@ public class ProductHelper {
     public static String NAME_COLUMN_NAME = "name";
     public static String TYPE_COLUMN_NAME = "text";
 
+    public static String NAME_COLUMN_NUMBER = "number";
+    public static String TYPE_COLUMN_NUMBER = "text";
+
     public static String NAME_COLUMN_UPC = "upc";
     public static String TYPE_COLUMN_UPC = "text";
 
@@ -46,6 +49,7 @@ public class ProductHelper {
         sb.append(" (");
         sb.append(NAME_COLUMN_ID + " " + TYPE_COLUMN_ID + " primary key, ");
         sb.append(NAME_COLUMN_NAME + " " + TYPE_COLUMN_NAME + ", ");
+        sb.append(NAME_COLUMN_NUMBER + " " + TYPE_COLUMN_NUMBER + ", ");
         sb.append(NAME_COLUMN_UPC + " " + TYPE_COLUMN_UPC + ", ");
         sb.append(NAME_COLUMN_DESCRIPTION + " " + TYPE_COLUMN_DESCRIPTION + ", ");
         sb.append(NAME_COLUMN_PRICE + " " + TYPE_COLUMN_PRICE + ")");
@@ -68,11 +72,12 @@ public class ProductHelper {
         Cursor c = db.query(TABLE_NAME, null, null, null, null, null, NAME_COLUMN_ID + " DESC");
         while(c.moveToNext()){
             Product item = new Product();
-            item.setId(UUID.fromString(c.getString(0)));
-            item.setName(c.getString(1));
-            item.setUpc(c.getString(2));
-            item.setDescription(c.getString(3));
-            item.setPrice(c.getDouble(4));
+            item.setId(UUID.fromString(c.getString(c.getColumnIndex(NAME_COLUMN_ID))));
+            item.setName(c.getString(c.getColumnIndex(NAME_COLUMN_NAME)));
+            item.setNumber(c.getString(c.getColumnIndex(NAME_COLUMN_NUMBER)));
+            item.setUpc(c.getString(c.getColumnIndex(NAME_COLUMN_UPC)));
+            item.setDescription(c.getString(c.getColumnIndex(NAME_COLUMN_DESCRIPTION)));
+            item.setPrice(c.getDouble(c.getColumnIndex(NAME_COLUMN_PRICE)));
 
             tempArray.add(item);
         }
@@ -88,11 +93,12 @@ public class ProductHelper {
         if(c!=null) c.moveToFirst();
 
         Product item = new Product();
-        item.setId(UUID.fromString(c.getString(0)));
-        item.setName(c.getString(1));
-        item.setUpc(c.getString(2));
-        item.setDescription(c.getString(3));
-        item.setPrice(c.getDouble(4));
+        item.setId(UUID.fromString(c.getString(c.getColumnIndex(NAME_COLUMN_ID))));
+        item.setName(c.getString(c.getColumnIndex(NAME_COLUMN_NAME)));
+        item.setNumber(c.getString(c.getColumnIndex(NAME_COLUMN_NUMBER)));
+        item.setUpc(c.getString(c.getColumnIndex(NAME_COLUMN_UPC)));
+        item.setDescription(c.getString(c.getColumnIndex(NAME_COLUMN_DESCRIPTION)));
+        item.setPrice(c.getDouble(c.getColumnIndex(NAME_COLUMN_PRICE)));
 
         item.loadImages();
 
