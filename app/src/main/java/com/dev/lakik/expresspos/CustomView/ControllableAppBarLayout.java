@@ -67,6 +67,8 @@ public class ControllableAppBarLayout extends AppBarLayout {
 
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) getLayoutParams();
         params.setBehavior(appBarLayoutBehaviour);
+
+
     }
 
     private enum ToolbarChange {

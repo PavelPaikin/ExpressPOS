@@ -2,11 +2,7 @@ package com.dev.lakik.expresspos;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -24,29 +20,31 @@ import android.view.MenuItem;
 import com.dev.lakik.expresspos.CustomView.ControllableAppBarLayout;
 import com.dev.lakik.expresspos.Database.DBHelper;
 import com.dev.lakik.expresspos.Fragments.CreateProductFragment;
+import com.dev.lakik.expresspos.Fragments.FullScannerFragment;
 import com.dev.lakik.expresspos.Fragments.InventoryFragment;
 import com.dev.lakik.expresspos.Fragments.OrdersFragment;
 import com.dev.lakik.expresspos.Fragments.POSFragment;
-import com.dev.lakik.expresspos.Model.Company;
 import com.dev.lakik.expresspos.Model.Const;
 import com.dev.lakik.expresspos.Model.Inventory;
 import com.dev.lakik.expresspos.Model.Product;
 import com.dev.lakik.expresspos.Model.ProductImage;
-import com.github.clans.fab.FloatingActionButton;
-import com.github.clans.fab.FloatingActionMenu;
 
-import java.util.ArrayList;
+import java.util.UUID;
+
+import static java.lang.System.in;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         InventoryFragment.OnFragmentInteractionListener,
         CreateProductFragment.OnFragmentInteractionListener,
         POSFragment.OnFragmentInteractionListener,
-        OrdersFragment.OnFragmentInteractionListener{
+        OrdersFragment.OnFragmentInteractionListener,
+        FullScannerFragment.OnFragmentInteractionListener{
 
     CollapsingToolbarLayout collapsingToolbarLayout = null;
     ControllableAppBarLayout appBarLayout = null;
     Fragment currentFragment;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +53,7 @@ public class MainActivity extends AppCompatActivity
 
         new DBHelper(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         collapsingToolbarLayout = (CollapsingToolbarLayout)findViewById(R.id.collapsingToolbar);
@@ -66,7 +64,7 @@ public class MainActivity extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-            this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
@@ -93,7 +91,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -147,7 +145,7 @@ public class MainActivity extends AppCompatActivity
 
         if(fragment!=null) {
             if(addToStack) transaction.addToBackStack(null);
-            transaction.setCustomAnimations(R.anim.enter, R.anim.exit);
+            transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
             transaction.replace(R.id.mainContainer, fragment);
             transaction.commit();
         }
@@ -160,9 +158,67 @@ public class MainActivity extends AppCompatActivity
             case Const.CREATE_NEW_PRODUCT_FRAGMENT:
                 changeFragment(CreateProductFragment.newInstance(), true);
                 appBarLayout.collapseToolbar();
+                collapsingToolbarLayout.setTitle("Add Product");
+                break;
+            case Const.SCANNER_FRAGMENT_FROM_INVENTORY:
+                changeFragment(FullScannerFragment.newInstance(InventoryFragment.class.getName()), true);
+                appBarLayout.collapseToolbar();
+                collapsingToolbarLayout.setTitle("");
+                break;
+            case Const.SCANNER_FRAGMENT_FROM_CREATE_PRODUCT:
+                changeFragment(FullScannerFragment.newInstance(CreateProductFragment.class.getName()), true);
+                appBarLayout.collapseToolbar();
                 collapsingToolbarLayout.setTitle("");
                 break;
 
+
         }
+    }
+
+    @Override
+    public void editProduct(Inventory inventory, boolean edit) {
+        changeFragment(CreateProductFragment.newInstance(inventory, edit), true);
+    }
+
+    @Override
+    public void scanCompleted(String parent, String barcode) {
+
+        if(parent == InventoryFragment.class.getName()){
+            Inventory item = Inventory.get(barcode);
+
+            if(item == null){
+                item = new Inventory();
+                Product p = new Product();
+                p.setUpc(barcode);
+
+                item.setProduct(p);
+            }
+
+            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                getSupportFragmentManager().popBackStack();
+            }
+
+            editProduct(item, false);
+
+        }
+
+        if(parent == CreateProductFragment.class.getName()){
+            currentFragment = getCreateProductFragment();
+            getSupportFragmentManager().popBackStack();
+
+            ((CreateProductFragment)currentFragment).setUPC(barcode);
+        }
+    }
+
+    private Fragment getCreateProductFragment(){
+        FragmentManager fragManager = this.getSupportFragmentManager();
+        int count = this.getSupportFragmentManager().getBackStackEntryCount();
+
+        Fragment fr = null;
+        for(Fragment f : fragManager.getFragments()){
+            if(f instanceof CreateProductFragment)
+                fr = f;
+        }
+        return fr;
     }
 }

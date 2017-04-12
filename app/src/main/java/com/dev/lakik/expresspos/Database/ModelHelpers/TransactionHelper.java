@@ -68,11 +68,11 @@ public class TransactionHelper {
         Cursor c = db.query(TABLE_NAME, null, null, null, null, null, NAME_COLUMN_DATE + " DESC");
         while(c.moveToNext()){
             Transaction item = new Transaction();
-            item.setId(UUID.fromString(c.getString(0)));
-            item.setDate(c.getString(1));
-            item.setSubTotal(c.getFloat(2));
-            item.setTax(c.getFloat(3));
-            item.setTotal(c.getFloat(4));
+            item.setId(UUID.fromString(c.getString(c.getColumnIndex(NAME_COLUMN_ID))));
+            item.setDate(c.getString(c.getColumnIndex(NAME_COLUMN_DATE)));
+            item.setSubTotal(c.getFloat(c.getColumnIndex(NAME_COLUMN_SUB_TOTAL)));
+            item.setTax(c.getFloat(c.getColumnIndex(NAME_COLUMN_TAX)));
+            item.setTotal(c.getFloat(c.getColumnIndex(NAME_COLUMN_TOTAL)));
 
             item.loadProducts();
 
@@ -90,11 +90,11 @@ public class TransactionHelper {
         if(c!=null) c.moveToFirst();
 
         Transaction item = new Transaction();
-        item.setId(UUID.fromString(c.getString(0)));
-        item.setDate(c.getString(1));
-        item.setSubTotal(c.getFloat(2));
-        item.setTax(c.getFloat(3));
-        item.setTotal(c.getFloat(4));
+        item.setId(UUID.fromString(c.getString(c.getColumnIndex(NAME_COLUMN_ID))));
+        item.setDate(c.getString(c.getColumnIndex(NAME_COLUMN_DATE)));
+        item.setSubTotal(c.getFloat(c.getColumnIndex(NAME_COLUMN_SUB_TOTAL)));
+        item.setTax(c.getFloat(c.getColumnIndex(NAME_COLUMN_TAX)));
+        item.setTotal(c.getFloat(c.getColumnIndex(NAME_COLUMN_TOTAL)));
 
         item.loadProducts();
 
