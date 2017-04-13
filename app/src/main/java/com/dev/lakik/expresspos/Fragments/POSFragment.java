@@ -32,10 +32,13 @@ import com.dev.lakik.expresspos.MainActivity;
 import com.dev.lakik.expresspos.Model.Const;
 import com.dev.lakik.expresspos.Model.Inventory;
 import com.dev.lakik.expresspos.Model.Product;
+import com.dev.lakik.expresspos.Model.Transaction;
 import com.dev.lakik.expresspos.Model.TransactionProduct;
 import com.dev.lakik.expresspos.R;
 import com.github.clans.fab.FloatingActionButton;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,7 +91,7 @@ public class POSFragment extends Fragment {
 
     RecyclerView rv;
 
-    TextView totalNumTV;
+    TextView subtotalNumTV, taxNumTV, totalNumTV;
 
     ListView listView;
 
@@ -102,7 +105,10 @@ public class POSFragment extends Fragment {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_pos, container, false);
 
+        subtotalNumTV = (TextView) view.findViewById(R.id.pos_subtotalNumTV);
+        taxNumTV = (TextView) view.findViewById(R.id.pos_taxNumTV);
         totalNumTV = (TextView) view.findViewById(R.id.pos_totalNumTV);
+
         inventoryArray = Inventory.getAllRecords();//Populate the inventory array from the database
 
         //RecyclerView for the product CardView
@@ -151,9 +157,26 @@ public class POSFragment extends Fragment {
         });
 
         submitBtn = (Button) view.findViewById(R.id.pos_submit);
-        submitBtn.setOnClickListener(new View.OnClickListener() {
+        submitBtn.setOnClickListener(new View.OnClickListener() { // TODO: 4/12/2017 Make this a button in the toolbar
             @Override
             public void onClick(View view) {
+
+                calculateTotal();
+
+                float tSub, tTax, tTotal;
+                tSub = (float) subtotal;
+                tTax = (float) round(subtotal * 0.13, 2);
+                tTotal = (float) round(subtotal * 1.13, 2);
+
+                Transaction newTrans = new Transaction("Today", tSub, tTax, tTotal);
+                newTrans.save();
+
+                for (Product item : prodArray) {
+                    TransactionProduct transProduct = new TransactionProduct(newTrans.getId(), item.getId(), (float) item.getPrice(), 1);
+                    transProduct.save();
+                    transactionProdArray.add(transProduct);
+                }
+
 
             }
         });
@@ -163,12 +186,31 @@ public class POSFragment extends Fragment {
 
 
     private void calculateTotal() {
+        subtotal = 0;
         for (Product product : prodArray) {
             subtotal += product.getPrice();
         }
 
-        String total = "$" + subtotal;
+        String total = "$" + round(subtotal, 2);
+        subtotalNumTV.setText(total);
+
+        total = "$" + round(subtotal * 0.13, 2);
+        taxNumTV.setText(total);
+
+        total = "$" + round(subtotal * 1.13, 2);
         totalNumTV.setText(total);
+
+    }
+
+    /*
+        From: http://stackoverflow.com/a/2808648
+     */
+    public double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 
     public class LVAdapter extends ArrayAdapter<Inventory> {

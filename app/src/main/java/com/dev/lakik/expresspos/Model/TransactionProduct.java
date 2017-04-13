@@ -25,6 +25,7 @@ public class TransactionProduct extends TransactionProductHelper {
 
     public TransactionProduct(){}
 
+
     public TransactionProduct(String transactionId, String productId, float price, int amount) {
         this.transactionId = UUID.fromString(transactionId);
         this.productId = UUID.fromString(productId);

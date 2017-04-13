@@ -96,41 +96,101 @@
 
     <ImageView
         android:id="@+id/pos_bottomImg"
-        android:layout_width="508dp"
-        android:layout_height="56dp"
+        android:layout_width="509dp"
+        android:layout_height="102dp"
         fab:layout_constraintBottom_toBottomOf="parent"
         fab:layout_constraintHorizontal_bias="0.0"
         fab:layout_constraintLeft_toLeftOf="parent"
         fab:layout_constraintRight_toRightOf="parent"
-        fab:srcCompat="@color/cardview_shadow_start_color" />
+        fab:srcCompat="@color/cardview_shadow_start_color"
+        tools:layout_editor_absoluteY="409dp"
+        tools:layout_editor_absoluteX="1dp"
+        android:layout_marginBottom="0dp" />
+
+    <TextView
+        android:id="@+id/pos_subtotalTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="10dp"
+        android:text="Sub Total:"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        fab:layout_constraintHorizontal_bias="0.025"
+        fab:layout_constraintLeft_toLeftOf="parent"
+        fab:layout_constraintRight_toRightOf="parent"
+        fab:layout_constraintTop_toTopOf="@+id/pos_bottomImg" />
+
+    <TextView
+        android:id="@+id/pos_subtotalNumTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:text="$3.99"
+        android:textSize="14sp"
+        fab:layout_constraintBottom_toBottomOf="@+id/pos_subtotalTV"
+        fab:layout_constraintLeft_toRightOf="@+id/pos_subtotalTV"
+        fab:layout_constraintTop_toTopOf="@+id/pos_subtotalTV" />
+
+    <TextView
+        android:id="@+id/pos_taxTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="9dp"
+        android:text="Tax:"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        fab:layout_constraintHorizontal_bias="0.026"
+        fab:layout_constraintLeft_toLeftOf="parent"
+        fab:layout_constraintRight_toRightOf="parent"
+        fab:layout_constraintTop_toBottomOf="@+id/pos_subtotalTV" />
+
+    <TextView
+        android:id="@+id/pos_taxNumTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="$3.99"
+        android:textSize="14sp"
+        fab:layout_constraintLeft_toRightOf="@+id/pos_taxTV"
+        fab:layout_constraintTop_toBottomOf="@+id/pos_subtotalNumTV" />
 
     <TextView
         android:id="@+id/pos_totalTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:text="Total:"
-        android:textSize="24sp"
+        android:textSize="14sp"
         android:textStyle="bold"
-        fab:layout_constraintHorizontal_bias="0.025"
+        fab:layout_constraintHorizontal_bias="0.027"
         fab:layout_constraintLeft_toLeftOf="parent"
         fab:layout_constraintRight_toRightOf="parent"
-        fab:layout_constraintTop_toTopOf="@+id/pos_bottomImg"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp" />
+        fab:layout_constraintTop_toBottomOf="@+id/pos_taxTV" />
 
     <TextView
         android:id="@+id/pos_totalNumTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
         android:text="$3.99"
-        android:textSize="24sp"
-        fab:layout_constraintBottom_toBottomOf="@+id/pos_totalTV"
+        android:textSize="14sp"
         fab:layout_constraintLeft_toRightOf="@+id/pos_totalTV"
-        fab:layout_constraintTop_toTopOf="@+id/pos_totalTV"
-        android:layout_marginStart="8dp" />
+        fab:layout_constraintTop_toBottomOf="@+id/pos_taxNumTV" />
+
 
 </android.support.constraint.ConstraintLayout>
