@@ -80,13 +80,13 @@ public class CreateProductFragment extends Fragment {
 
     private int currentPosition = 0;
 
+    private boolean flagFromOnResult = false;
+
     public CreateProductFragment() {
         // Required empty public constructor
     }
     public static CreateProductFragment newInstance() {
         CreateProductFragment fragment = new CreateProductFragment();
-        //Bundle args = new Bundle();
-        //fragment.setArguments(args);
         return fragment;
     }
 
@@ -157,12 +157,17 @@ public class CreateProductFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        setData();
+        if(!flagFromOnResult) {
+            setData();
+        }
+
+        flagFromOnResult = false;
 
         if(loadUPC != ""){
             etUPC.setText(loadUPC);
         }
 
+        inventory.printObject();
     }
 
     @Override
@@ -226,11 +231,9 @@ public class CreateProductFragment extends Fragment {
 
         if (id == R.id.action_submit) {
 
-            //if(inventory == null) {
-            //    product = new Product();
-            //}else{
-                product = inventory.getProduct();
-            //}
+            inventory.printObject();
+
+            product = inventory.getProduct();
 
             product.setName(etProductName.getText().toString());
             product.setNumber(etProductNumber.getText().toString().toUpperCase());
@@ -262,7 +265,7 @@ public class CreateProductFragment extends Fragment {
 
                 inventory.save();
             }
-
+            inventory.printObject();
             getActivity().onBackPressed();
             return true;
         }
@@ -343,6 +346,7 @@ public class CreateProductFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        flagFromOnResult = true;
         if(requestCode == CAMERA_INTENT && resultCode == RESULT_OK){
 
             File pic = new File(imageLocation);
@@ -350,7 +354,9 @@ public class CreateProductFragment extends Fragment {
         }
 
         if (requestCode == Crop.REQUEST_CROP && resultCode == RESULT_OK) {
-            inventory.getProduct().addImage(new ProductImage(imageLocation));
+            ProductImage img = new ProductImage(imageLocation);
+            inventory.getProduct().addImage(img);
+            img.save();
             imageAdapter.notifyDataSetChanged();
 
             vpImages.setCurrentItem(imageAdapter.getCount() - 1, true);
@@ -369,6 +375,10 @@ public class CreateProductFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public Inventory getInventory() {
+        return inventory;
     }
 
     public class ProductFormValidatorHelper extends InputValidationHelper {

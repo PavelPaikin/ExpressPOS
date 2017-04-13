@@ -30,7 +30,7 @@
         fab:layout_constraintBottom_toTopOf="@+id/pos_bottomImg" />
 
     <com.github.clans.fab.FloatingActionMenu
-        android:id="@+id/inventory_fam"
+        android:id="@+id/pos_fam"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

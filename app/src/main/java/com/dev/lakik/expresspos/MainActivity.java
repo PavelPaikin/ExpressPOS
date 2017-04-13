@@ -85,10 +85,10 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new POSFragment()).commit();
+        //getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new POSFragment()).commit();
 
-        //changeFragment(POSFragment.newInstance(), false);
-        //collapsingToolbarLayout.setTitle("POS");
+        changeFragment(POSFragment.newInstance(), false);
+        collapsingToolbarLayout.setTitle("POS");
     }
 
     @Override
@@ -233,7 +233,27 @@ public class MainActivity extends AppCompatActivity
             currentFragment = getCreateProductFragment();
             getSupportFragmentManager().popBackStack();
 
-            ((CreateProductFragment)currentFragment).setUPC(barcode);
+            //((CreateProductFragment)currentFragment).setUPC(barcode);
+
+
+
+            Inventory item = Inventory.get(barcode);
+
+            if(item == null){
+
+                item = ((CreateProductFragment)currentFragment).getInventory();
+                item.getProduct().setUpc(barcode);
+
+            }else{
+                item.printObject();
+                if(item.getProduct().hasImages()) item.getProduct().loadImages();
+            }
+
+            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                getSupportFragmentManager().popBackStack();
+            }
+
+            editProduct(item, false);
         }
     }
 

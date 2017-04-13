@@ -72,6 +72,7 @@ public class ProductImageHelper {
     }
 
     public static ArrayList<ProductImage> getAllRecordsForProduct(String id){
+        Log.d("dsf", "Product id: " + id);
         SQLiteDatabase db = DBHelper.Instance().getDB();
 
         ArrayList<ProductImage> tempArray = new ArrayList<>();

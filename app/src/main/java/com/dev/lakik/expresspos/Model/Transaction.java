@@ -26,7 +26,13 @@ public class Transaction extends TransactionHelper {
 
     private ArrayList<TransactionProduct> arrTransProducts;
 
-    public Transaction(){}
+    public Transaction(){
+        this.id = UUID.randomUUID();
+        this.date = new Date().toString();
+        this.subTotal = 0;
+        this.tax = 0;
+        this.total = 0;
+    }
 
     public Transaction(String date, float subTotal, float tax, float total) {
         this.id = UUID.randomUUID();
@@ -47,6 +53,27 @@ public class Transaction extends TransactionHelper {
 
     public void loadProducts(){
         this.arrTransProducts = TransactionProduct.getAllRecordsByID(id.toString());
+    }
+
+    public void addProduct(Product product){
+        TransactionProduct trProduct = null;
+
+        for(TransactionProduct tr : arrTransProducts){
+            if(tr.getProductId().equals(product.getId())){
+                trProduct = tr;
+            }
+        }
+
+        if(trProduct == null){
+            trProduct = new TransactionProduct(product);
+            arrTransProducts.add(trProduct);
+        }else{
+            trProduct.addAmount();
+        }
+    }
+
+    public void removeProduct(TransactionProduct product){
+        arrTransProducts.remove(product);
     }
 
     //Save current item to database if exists updates record

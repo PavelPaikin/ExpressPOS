@@ -109,6 +109,7 @@ public class Inventory extends InventoryHelper implements Parcelable {
 
     protected Inventory(Parcel in) {
         id = UUID.fromString(in.readString());
+        product_id = UUID.fromString(in.readString());
         amount = in.readInt();
         product = in.readParcelable(Product.class.getClassLoader());
     }
@@ -116,6 +117,7 @@ public class Inventory extends InventoryHelper implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id.toString());
+        dest.writeString(product_id.toString());
         dest.writeInt(amount);
         dest.writeParcelable(product, flags);
     }

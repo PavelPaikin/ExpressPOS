@@ -1,5 +1,6 @@
 package com.dev.lakik.expresspos.Adapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +11,9 @@ import android.widget.TextView;
 import com.dev.lakik.expresspos.Model.Inventory;
 import com.dev.lakik.expresspos.Model.Product;
 import com.dev.lakik.expresspos.R;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -19,8 +22,10 @@ import java.util.ArrayList;
 
 public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.ViewHolder> {
     private ArrayList<Inventory> mDataset;
+    private Context ctx;
 
-    public InventoryAdapter() {
+    public InventoryAdapter(Context ctx) {
+        this.ctx = ctx;
         mDataset = new ArrayList<Inventory>();
     }
 
@@ -37,6 +42,10 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.View
         holder.tvNumber.setText(mDataset.get(position).getProduct().getNumber());
         holder.tvAmount.setText(mDataset.get(position).getAmount() + "");
         holder.tvPrice.setText(String.format("%.2f$", mDataset.get(position).getProduct().getPrice()));
+
+        if(mDataset.get(position).getProduct().hasImages()) {
+            Picasso.with(ctx).load(new File(mDataset.get(position).getProduct().getImages().get(0).getImagePath())).resize(200,200).centerInside().into(holder.imgProduct);
+        }
     }
 
     @Override

@@ -67,6 +67,7 @@ public class InventoryHelper {
 
         //Cursor c = db.rawQuery("Select "+ TABLE_NAME +".*, " + Product.TABLE_NAME +".* from " + TABLE_NAME + " where " + NAME_COLUMN_AMOUNT + "> 0", null);
         Cursor c = db.rawQuery(sql, null);
+        //logCursor(c);
         while(c.moveToNext()){
             Inventory item = new Inventory();
             item.setId(UUID.fromString(c.getString(c.getColumnIndex("inventory_id"))));
@@ -74,7 +75,7 @@ public class InventoryHelper {
             item.setAmount(c.getInt(c.getColumnIndex("amount")));
 
             Product product = new Product();
-            product.setId(UUID.fromString(c.getString(c.getColumnIndex("inventory_id"))));
+            product.setId(UUID.fromString(c.getString(c.getColumnIndex("id"))));
             product.setName(c.getString(c.getColumnIndex("name")));
             product.setUpc(c.getString(c.getColumnIndex("upc")));
             product.setNumber(c.getString(c.getColumnIndex("number")));
@@ -92,6 +93,7 @@ public class InventoryHelper {
 
             item.setProduct(product);
 
+
             tempArray.add(item);
         }
         c.close();
@@ -107,10 +109,11 @@ public class InventoryHelper {
                      "FROM Inventory " +
                      "INNER JOIN Product ON Inventory.product_id = Product.id " +
                      "LEFT JOIN ProductImage ON Inventory.product_id = ProductImage.product_id " +
-                     "WHERE Product.upc = " + upc + " GROUP BY Inventory.id";
+                     "WHERE Product.upc = '" + upc + "' GROUP BY Inventory.id";
 
         //Cursor c = db.rawQuery("Select * from " + TABLE_NAME + " where " + NAME_COLUMN_ID + "= '" + id + "'", null);
         Cursor c = db.rawQuery(sql, null);
+        Log.d("dddd", c.getCount() + "");
         logCursor(c);
         if(c.getCount() != 0) {
             c.moveToFirst();
@@ -121,7 +124,7 @@ public class InventoryHelper {
             item.setAmount(c.getInt(c.getColumnIndex("amount")));
 
             Product product = new Product();
-            product.setId(UUID.fromString(c.getString(c.getColumnIndex("inventory_id"))));
+            product.setId(UUID.fromString(c.getString(c.getColumnIndex("id"))));
             product.setName(c.getString(c.getColumnIndex("name")));
             product.setUpc(c.getString(c.getColumnIndex("upc")));
             product.setNumber(c.getString(c.getColumnIndex("number")));

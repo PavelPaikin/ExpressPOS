@@ -81,7 +81,7 @@ public class InventoryFragment extends Fragment implements RecyclerItemClickList
         mLayoutManager = new LinearLayoutManager(getContext());
         rvInventory.setLayoutManager(mLayoutManager);
 
-        mAdapter = new InventoryAdapter();
+        mAdapter = new InventoryAdapter(getContext());
         rvInventory.setAdapter(mAdapter);
 
         rvInventory.setNestedScrollingEnabled(false);
