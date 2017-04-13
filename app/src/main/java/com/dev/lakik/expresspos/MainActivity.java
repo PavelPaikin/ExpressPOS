@@ -22,8 +22,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.dev.lakik.expresspos.Fragments.CreditsFragment;
 import com.dev.lakik.expresspos.Fragments.LoginFragment;
+import com.dev.lakik.expresspos.Fragments.POSSummaryFragment;
 import com.dev.lakik.expresspos.Fragments.RegisterFragment;
+import com.dev.lakik.expresspos.Fragments.SettingsFragment;
 import com.dev.lakik.expresspos.Fragments.SplashFragment;
 
 import com.dev.lakik.expresspos.CustomView.ControllableAppBarLayout;
@@ -38,6 +41,7 @@ import com.dev.lakik.expresspos.Model.Const;
 import com.dev.lakik.expresspos.Model.Inventory;
 import com.dev.lakik.expresspos.Model.Product;
 import com.dev.lakik.expresspos.Model.ProductImage;
+import com.dev.lakik.expresspos.Model.Transaction;
 import com.soundcloud.android.crop.Crop;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -52,6 +56,7 @@ public class MainActivity extends AppCompatActivity
         InventoryFragment.OnFragmentInteractionListener,
         CreateProductFragment.OnFragmentInteractionListener,
         POSFragment.OnFragmentInteractionListener,
+        POSSummaryFragment.OnFragmentInteractionListener,
         OrdersFragment.OnFragmentInteractionListener,
         FullScannerFragment.OnFragmentInteractionListener{
 
@@ -85,10 +90,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new POSFragment()).commit();
-
         changeFragment(POSFragment.newInstance(), false);
-        collapsingToolbarLayout.setTitle("POS");
     }
 
     @Override
@@ -139,21 +141,29 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_pos:
                 changeFragment(POSFragment.newInstance(), false);
                 appBarLayout.collapseToolbar();
-                collapsingToolbarLayout.setTitle("POS");
                 break;
             case R.id.nav_inventory:
                 changeFragment(InventoryFragment.newInstance(), false);
                 appBarLayout.collapseToolbar();
-                collapsingToolbarLayout.setTitle("Inventory");
                 break;
             case R.id.nav_orders:
                 changeFragment(OrdersFragment.newInstance(), false);
                 appBarLayout.collapseToolbar();
-                collapsingToolbarLayout.setTitle("Orders");
+                break;
+            case R.id.nav_credits:
+                changeFragment(new CreditsFragment(), false);
+                setToolbarTitle("Credits");
+                appBarLayout.collapseToolbar();
+                break;
+            case R.id.nav_settings:
+                changeFragment(new SettingsFragment(), false);
+                setToolbarTitle("Settings");
+                appBarLayout.collapseToolbar();
                 break;
             case R.id.nav_logout:
                 Intent intent = new Intent(this, SplashActivity.class);
                 startActivity(intent);
+                finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -183,22 +193,18 @@ public class MainActivity extends AppCompatActivity
             case Const.CREATE_NEW_PRODUCT_FRAGMENT:
                 changeFragment(CreateProductFragment.newInstance(), true);
                 appBarLayout.collapseToolbar();
-                collapsingToolbarLayout.setTitle("Add Product");
                 break;
             case Const.SCANNER_FRAGMENT_FROM_INVENTORY:
                 changeFragment(FullScannerFragment.newInstance(InventoryFragment.class.getName()), true);
                 appBarLayout.collapseToolbar();
-                collapsingToolbarLayout.setTitle("");
                 break;
             case Const.SCANNER_FRAGMENT_FROM_CREATE_PRODUCT:
                 changeFragment(FullScannerFragment.newInstance(CreateProductFragment.class.getName()), true);
                 appBarLayout.collapseToolbar();
-                collapsingToolbarLayout.setTitle("");
                 break;
             case Const.SCANNER_FRAGMENT_FROM_POS:
                 changeFragment(FullScannerFragment.newInstance(POSFragment.class.getName()), true);
                 appBarLayout.collapseToolbar();
-                collapsingToolbarLayout.setTitle("");
                 break;
             case Const.RELOAD_CREATE_PRODUCT:
                 if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
@@ -208,7 +214,7 @@ public class MainActivity extends AppCompatActivity
                 boolean mode = ((CreateProductFragment)currentFragment).getEdit();
                 changeFragment(CreateProductFragment.newInstance(inv, mode), true);
                 appBarLayout.collapseToolbar();
-                collapsingToolbarLayout.setTitle("");
+
                 break;
 
         }
@@ -257,7 +263,6 @@ public class MainActivity extends AppCompatActivity
                 item.getProduct().setUpc(barcode);
 
             }else{
-                //item.printObject();
                 if(item.getProduct().hasImages()) item.getProduct().loadImages();
             }
 
@@ -301,4 +306,14 @@ public class MainActivity extends AppCompatActivity
         return fr;
     }
 
+    @Override
+    public void showTransactionSummary(Transaction transaction) {
+        changeFragment(POSSummaryFragment.newInstance(transaction), true);
+
+    }
+
+    @Override
+    public void setToolbarTitle(String title) {
+        collapsingToolbarLayout.setTitle(title);
+    }
 }

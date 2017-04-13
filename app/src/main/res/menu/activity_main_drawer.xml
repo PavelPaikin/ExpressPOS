@@ -24,6 +24,10 @@
         android:checkableBehavior="none"
         android:id="@+id/nav_bottom">
         <item
+            android:id="@+id/nav_credits"
+            android:icon="@drawable/ic_info_outline_black_24dp"
+            android:title="Credits" />
+        <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings_black_24dp"
             android:title="Settings" />

@@ -23,4 +23,17 @@
     <string name="amount">Amount</string>
     <string name="price">Price</string>
 
+    <string name="settings_category_pos">POS Settings</string>
+    <string name="settings_category_inventory">Inventory Settings</string>
+
+    <string name="tax_value">Tax Value</string>
+    <string name="tax_value_description">Set tax value in your area</string>
+
+    <string name="show_pick_list_button">Show list button</string>
+    <string name="show_pick_list_button_description">Show/Hide select from list button on POS</string>
+
+    <string name="allow_editing">Allow Editing</string>
+    <string name="allow_editing_description">Allow to edit existion products in inventory</string>
+
+
 </resources>

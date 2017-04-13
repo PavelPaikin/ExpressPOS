@@ -1,11 +1,14 @@
 package com.dev.lakik.expresspos.Fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -49,6 +52,8 @@ public class POSFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     private FloatingActionMenu famPOS;
+
+    private float tax = 0.13f;
 
     public POSFragment() {
         // Required empty public constructor
@@ -132,39 +137,48 @@ public class POSFragment extends Fragment {
             }
         });
 
-        final FloatingActionButton fabCreateNewProduct = (FloatingActionButton)view.findViewById(R.id.fab_select_from_list);
-        fabCreateNewProduct.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Alert Dialog and ListView
-                final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-                final AlertDialog alertDialog = alertDialogBuilder.create();
-                inventoryArray.clear();
-                inventoryArray = Inventory.getAllRecords();//Populate the inventory array from the database
-                alertDialog.setTitle("Add Product");
-                final LVAdapter lvAdapter = new LVAdapter(getContext(), inventoryArray);
-                View newView = LayoutInflater.from(getContext()).inflate(R.layout.pos_addlist, container, false);
-                listView = (ListView) newView.findViewById(R.id.pos_addListView);
-                listView.setAdapter(lvAdapter);
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        Product newProduct = inventoryArray.get(i).getProduct();
-                        prodArray.add(newProduct);
-                        alertDialog.cancel();
-                        adapter.notifyDataSetChanged();
-                        calculateTotal();
 
-                        famPOS.close(true);
-                    }
-                });
+        FloatingActionButton fabSelectFromList = (FloatingActionButton)view.findViewById(R.id.fab_select_from_list);
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        if(sharedPrefs.getBoolean("key_show_list_button", true)) {
 
-                alertDialog.setView(listView);
-                alertDialog.show();
-            }
-        });
+            fabSelectFromList.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Alert Dialog and ListView
+                    final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                    final AlertDialog alertDialog = alertDialogBuilder.create();
+                    inventoryArray.clear();
+                    inventoryArray = Inventory.getAllRecords();//Populate the inventory array from the database
+                    alertDialog.setTitle("Add Product");
+                    final LVAdapter lvAdapter = new LVAdapter(getContext(), inventoryArray);
+                    View newView = LayoutInflater.from(getContext()).inflate(R.layout.pos_addlist, container, false);
+                    listView = (ListView) newView.findViewById(R.id.pos_addListView);
+                    listView.setAdapter(lvAdapter);
+                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                            Product newProduct = inventoryArray.get(i).getProduct();
+                            prodArray.add(newProduct);
+                            alertDialog.cancel();
+                            adapter.notifyDataSetChanged();
+                            calculateTotal();
+
+                            famPOS.close(true);
+                        }
+                    });
+
+                    alertDialog.setView(listView);
+                    alertDialog.show();
+                }
+            });
+
+        }else{
+            famPOS.removeMenuButton(fabSelectFromList);
+        }
 
         submitBtn = (Button) view.findViewById(R.id.pos_submit);
+
         submitBtn.setOnClickListener(new View.OnClickListener() { // TODO: 4/12/2017 Make this a button in the toolbar
             @Override
             public void onClick(View view) {
@@ -173,8 +187,8 @@ public class POSFragment extends Fragment {
 
                 float tSub, tTax, tTotal;
                 tSub = (float) subtotal;
-                tTax = (float) round(subtotal * 0.13, 2);
-                tTotal = (float) round(subtotal * 1.13, 2);
+                tTax = (float) round(subtotal * tax, 2);
+                tTotal = (float) round(subtotal * (1 + tax), 2);
 
                 Transaction newTrans = new Transaction("Today", tSub, tTax, tTotal);
                 newTrans.save();
@@ -187,11 +201,21 @@ public class POSFragment extends Fragment {
 
 
             }
-        });
+            });
+
 
         return view;
     }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mListener.setToolbarTitle("POS");
+
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        tax = Float.parseFloat(sharedPrefs.getString("key_tax_value", "13")) / 100;
+    }
 
     private void calculateTotal() {
         subtotal = 0;
@@ -363,5 +387,6 @@ public class POSFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
+        void setToolbarTitle(String title);
     }
 }
