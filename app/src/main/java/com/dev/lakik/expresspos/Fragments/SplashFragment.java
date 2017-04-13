@@ -3,7 +3,9 @@ package com.dev.lakik.expresspos.Fragments;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.media.Image;
@@ -25,6 +27,7 @@ import android.widget.TextView;
 
 import com.dev.lakik.expresspos.Database.DBHelper;
 import com.dev.lakik.expresspos.Database.ModelHelpers.CompanyHelper;
+import com.dev.lakik.expresspos.MainActivity;
 import com.dev.lakik.expresspos.Model.Company;
 import com.dev.lakik.expresspos.R;
 
@@ -90,6 +93,8 @@ public class SplashFragment extends Fragment {
         display.getSize(size);
         int width = size.x;
         int height = size.y;
+
+        final Activity act = this.getActivity();
 
         //Initialize the array list
         slideInArray = new ArrayList<>();
@@ -176,9 +181,11 @@ public class SplashFragment extends Fragment {
                 if (validLogin) {
                     // TODO: 4/5/2017 Redirect user to the homepage screen
                     System.out.println("VALID LOGIN");
+                    Intent intent = new Intent(act, MainActivity.class);
+                    startActivity(intent);
                 } else {
                     passwordET.setText("");
-                    passwordET.setHint("Incorrect Login Details");
+                    passwordET.setHint("Incorrect Login");
                 }
 
             }
@@ -187,7 +194,7 @@ public class SplashFragment extends Fragment {
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getActivity().getSupportFragmentManager().beginTransaction().addToBackStack(null).replace(R.id.mainContainer, new RegisterFragment()).commit();
+                getActivity().getSupportFragmentManager().beginTransaction().addToBackStack(null).replace(R.id.splash_mainContainer, new RegisterFragment()).commit();
             }
         });
 
