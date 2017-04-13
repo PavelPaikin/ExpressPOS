@@ -128,7 +128,7 @@ public class POSFragment extends Fragment {
         fabScanProduct.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onFragmentInteraction(Uri.parse(Const.SCANNER_FRAGMENT_FROM_INVENTORY));
+                mListener.onFragmentInteraction(Uri.parse(Const.SCANNER_FRAGMENT_FROM_POS));
             }
         });
 
@@ -208,6 +208,12 @@ public class POSFragment extends Fragment {
         total = "$" + round(subtotal * 1.13, 2);
         totalNumTV.setText(total);
 
+    }
+
+    public void addProduct(Product product){
+        prodArray.add(product);
+        calculateTotal();
+        famPOS.close(true);
     }
 
     /*

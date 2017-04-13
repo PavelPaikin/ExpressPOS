@@ -195,7 +195,21 @@ public class MainActivity extends AppCompatActivity
                 appBarLayout.collapseToolbar();
                 collapsingToolbarLayout.setTitle("");
                 break;
-
+            case Const.SCANNER_FRAGMENT_FROM_POS:
+                changeFragment(FullScannerFragment.newInstance(POSFragment.class.getName()), true);
+                appBarLayout.collapseToolbar();
+                collapsingToolbarLayout.setTitle("");
+                break;
+            case Const.RELOAD_CREATE_PRODUCT:
+                if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                    getSupportFragmentManager().popBackStack();
+                }
+                Inventory inv = ((CreateProductFragment)currentFragment).getInventory();
+                boolean mode = ((CreateProductFragment)currentFragment).getEdit();
+                changeFragment(CreateProductFragment.newInstance(inv, mode), true);
+                appBarLayout.collapseToolbar();
+                collapsingToolbarLayout.setTitle("");
+                break;
 
         }
     }
@@ -235,8 +249,6 @@ public class MainActivity extends AppCompatActivity
 
             //((CreateProductFragment)currentFragment).setUPC(barcode);
 
-
-
             Inventory item = Inventory.get(barcode);
 
             if(item == null){
@@ -245,7 +257,7 @@ public class MainActivity extends AppCompatActivity
                 item.getProduct().setUpc(barcode);
 
             }else{
-                item.printObject();
+                //item.printObject();
                 if(item.getProduct().hasImages()) item.getProduct().loadImages();
             }
 
@@ -254,6 +266,14 @@ public class MainActivity extends AppCompatActivity
             }
 
             editProduct(item, false);
+        }
+
+        if(parent == POSFragment.class.getName()){
+            currentFragment = getPOSFragment();
+            getSupportFragmentManager().popBackStack();
+
+            Inventory inv = Inventory.get(barcode);
+            ((POSFragment)currentFragment).addProduct(inv.getProduct());
         }
     }
 
@@ -264,6 +284,18 @@ public class MainActivity extends AppCompatActivity
         Fragment fr = null;
         for(Fragment f : fragManager.getFragments()){
             if(f instanceof CreateProductFragment)
+                fr = f;
+        }
+        return fr;
+    }
+
+    private Fragment getPOSFragment(){
+        FragmentManager fragManager = this.getSupportFragmentManager();
+        int count = this.getSupportFragmentManager().getBackStackEntryCount();
+
+        Fragment fr = null;
+        for(Fragment f : fragManager.getFragments()){
+            if(f instanceof POSFragment)
                 fr = f;
         }
         return fr;

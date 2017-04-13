@@ -1,6 +1,7 @@
 package com.dev.lakik.expresspos.Fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -306,12 +308,32 @@ public class CreateProductFragment extends Fragment {
         }
     };
 
-    public void removeImage(String id){
+    public void removeImage(final String imageId){
 
-        currentPosition = vpImages.getCurrentItem();
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
-        ProductImage img = inventory.getProduct().getImageByID(id);
-        inventory.getProduct().removeImage(img);
+        builder
+                .setMessage("Do you want to delete this image?")
+                .setPositiveButton("Yes",  new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        currentPosition = vpImages.getCurrentItem();
+
+                        ProductImage img = inventory.getProduct().getImageByID(imageId);
+                        inventory.getProduct().removeImage(img);
+
+                        mListener.onFragmentInteraction(Uri.parse(Const.RELOAD_CREATE_PRODUCT));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                })
+                .show();
+
+
 /*
         inventory.getProduct().printObject();
         vpImages.removeAllViews();
@@ -325,8 +347,8 @@ public class CreateProductFragment extends Fragment {
         vpImages.setCurrentItem(currentPosition);
 */
 
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.detach(this).attach(this).commit();
+        //FragmentTransaction ft = getFragmentManager().beginTransaction();
+        //ft.detach(this).attach(this).commit();
     }
 
     private File createImage() throws IOException {
@@ -379,6 +401,10 @@ public class CreateProductFragment extends Fragment {
 
     public Inventory getInventory() {
         return inventory;
+    }
+
+    public boolean getEdit(){
+        return this.edit;
     }
 
     public class ProductFormValidatorHelper extends InputValidationHelper {
