@@ -5,6 +5,7 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
@@ -69,6 +70,13 @@ public class FullScannerFragment extends Fragment implements ZXingScannerView.Re
 
         setupFormats();
         return mScannerView;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mListener.setToolbarTitle("");
     }
 
     @Override
@@ -184,5 +192,6 @@ public class FullScannerFragment extends Fragment implements ZXingScannerView.Re
 
     public interface OnFragmentInteractionListener {
         void scanCompleted(String parent, String barcode);
+        void setToolbarTitle(String title);
     }
 }

@@ -2,6 +2,8 @@ package com.dev.lakik.expresspos.Model;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import com.dev.lakik.expresspos.Database.DBHelper;
@@ -14,7 +16,7 @@ import java.util.UUID;
  * Created by ppash on 08.02.2017.
  */
 
-public class TransactionProduct extends TransactionProductHelper {
+public class TransactionProduct extends TransactionProductHelper implements Parcelable {
 
     private UUID transactionId;
     private UUID productId;
@@ -43,6 +45,8 @@ public class TransactionProduct extends TransactionProductHelper {
 
         this.product = Product.get(productId.toString());
     }
+
+
 
     public void loadProduct(){
         this.product = Product.get(productId.toString());
@@ -97,4 +101,38 @@ public class TransactionProduct extends TransactionProductHelper {
     public int getAmount() { return amount; }
     public void setAmount(int amount) { this.amount = amount; }
     public Product getProduct(){return product;}
+
+    protected TransactionProduct(Parcel in) {
+        transactionId = UUID.fromString(in.readString());
+        productId = UUID.fromString(in.readString());
+        price = in.readDouble();
+        amount = in.readInt();
+        product = in.readParcelable(Product.class.getClassLoader());
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(transactionId.toString());
+        dest.writeString(productId.toString());
+        dest.writeDouble(price);
+        dest.writeInt(amount);
+        dest.writeParcelable(product, flags);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<TransactionProduct> CREATOR = new Creator<TransactionProduct>() {
+        @Override
+        public TransactionProduct createFromParcel(Parcel in) {
+            return new TransactionProduct(in);
+        }
+
+        @Override
+        public TransactionProduct[] newArray(int size) {
+            return new TransactionProduct[size];
+        }
+    };
 }

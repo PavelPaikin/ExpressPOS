@@ -153,6 +153,12 @@ public class CreateProductFragment extends Fragment {
 
         validator = new ProductFormValidatorHelper();
 
+        if(edit) {
+            mListener.setToolbarTitle("Edit Product");
+        }else{
+            mListener.setToolbarTitle("Create Product");
+        }
+
     }
 
     @Override
@@ -178,16 +184,6 @@ public class CreateProductFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_create_product, container, false);
     }
 
-    public void setUPC(String upc){
-        Inventory inv = Inventory.get(upc);
-        if(inv != null){
-            inventory = inv;
-            if(inventory.getProduct().hasImages()) inventory.getProduct().loadImages();
-        }else{
-            loadUPC = upc;
-        }
-    }
-
     private void setData(){
         etProductName.setText(inventory.getProduct().getName());
         etProductNumber.setText(inventory.getProduct().getNumber());
@@ -204,13 +200,11 @@ public class CreateProductFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        Log.d("dsada", "onSaveInstanceState");
         super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onAttach(Context context) {
-        Log.d("sdad", "Attached");
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
@@ -258,13 +252,8 @@ public class CreateProductFragment extends Fragment {
             if(!validator.validateAmount(etAmount.getText().toString())) {
                 return  false;
             }else{
-                //if(inventory == null) {
-                //    inventory = new Inventory(product, Integer.parseInt(etAmount.getText().toString()));
-                //}else{
                 if(edit) inventory.setAmount(Integer.parseInt(etAmount.getText().toString()));
                 else inventory.setAmount(inventory.getAmount() + Integer.parseInt(etAmount.getText().toString()));
-                //}
-
                 inventory.save();
             }
             inventory.printObject();
@@ -333,22 +322,6 @@ public class CreateProductFragment extends Fragment {
                 })
                 .show();
 
-
-/*
-        inventory.getProduct().printObject();
-        vpImages.removeAllViews();
-        vpImages.setAdapter(imageAdapter);
-        pageIndicatorView.setViewPager(vpImages);
-
-        if(currentPosition >= imageAdapter.getCount()){
-            currentPosition = imageAdapter.getCount()-1;
-        }
-
-        vpImages.setCurrentItem(currentPosition);
-*/
-
-        //FragmentTransaction ft = getFragmentManager().beginTransaction();
-        //ft.detach(this).attach(this).commit();
     }
 
     private File createImage() throws IOException {
@@ -382,7 +355,6 @@ public class CreateProductFragment extends Fragment {
             imageAdapter.notifyDataSetChanged();
 
             vpImages.setCurrentItem(imageAdapter.getCount() - 1, true);
-            //pageIndicatorView.setCount(imageAdapter.getCount());
         }
     }
 
@@ -395,8 +367,8 @@ public class CreateProductFragment extends Fragment {
 
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+        void setToolbarTitle(String title);
     }
 
     public Inventory getInventory() {

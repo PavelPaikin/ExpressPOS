@@ -2,12 +2,16 @@ package com.dev.lakik.expresspos.Model;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import com.dev.lakik.expresspos.Database.DBHelper;
 import com.dev.lakik.expresspos.Database.ModelHelpers.InventoryHelper;
 import com.dev.lakik.expresspos.Database.ModelHelpers.TransactionHelper;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
@@ -16,40 +20,67 @@ import java.util.UUID;
  * Created by ppash on 08.02.2017.
  */
 
-public class Transaction extends TransactionHelper {
+public class Transaction extends TransactionHelper implements Parcelable {
 
     private UUID id;
-    private String date;
+    private Date date;
     private float subTotal;
     private float tax;
     private float total;
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+
 
     private ArrayList<TransactionProduct> arrTransProducts;
 
     public Transaction(){
         this.id = UUID.randomUUID();
-        this.date = new Date().toString();
+        this.date = new Date();
         this.subTotal = 0;
         this.tax = 0;
         this.total = 0;
+
+        arrTransProducts = new ArrayList<>();
+    }
+
+    public Transaction(Date date, float subTotal, float tax, float total) {
+        this.id = UUID.randomUUID();
+        this.date = date;
+        this.subTotal = subTotal;
+        this.tax = tax;
+        this.total = total;
+
+        arrTransProducts = new ArrayList<>();
     }
 
     public Transaction(String date, float subTotal, float tax, float total) {
         this.id = UUID.randomUUID();
-        this.date = date;
+        try {
+            this.date = dateFormat.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         this.subTotal = subTotal;
         this.tax = tax;
         this.total = total;
 
+        arrTransProducts = new ArrayList<>();
     }
 
     public Transaction(UUID id, String date, float subTotal, float tax, float total) {
         this.id = UUID.randomUUID();
-        this.date = date;
+        try {
+            this.date = dateFormat.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         this.subTotal = subTotal;
         this.tax = tax;
         this.total = total;
+
+        arrTransProducts = new ArrayList<>();
     }
+
+
 
     public void loadProducts(){
         this.arrTransProducts = TransactionProduct.getAllRecordsByID(id.toString());
@@ -76,13 +107,17 @@ public class Transaction extends TransactionHelper {
         arrTransProducts.remove(product);
     }
 
+    public int getProductsCount(){
+        return arrTransProducts.size();
+    }
+
     //Save current item to database if exists updates record
     public void save(){
         SQLiteDatabase db = DBHelper.Instance().getDB();
         ContentValues cv = new ContentValues();
 
         cv.put(NAME_COLUMN_ID, this.id.toString());
-        cv.put(NAME_COLUMN_DATE, this.date);
+        cv.put(NAME_COLUMN_DATE, dateFormat.format(this.date));
         cv.put(NAME_COLUMN_SUB_TOTAL, this.subTotal);
         cv.put(NAME_COLUMN_TAX, this.tax);
         cv.put(NAME_COLUMN_TOTAL, this.total);
@@ -111,12 +146,63 @@ public class Transaction extends TransactionHelper {
 
     public String getId() { return id.toString(); }
     public void setId(UUID id) { this.id = id; }
-    public String getDate() { return date; }
-    public void setDate(String date) { this.date = date; }
+    public Date getDate() { return date; }
+    public void setDate(Date date) { this.date = date; }
+    public void setDate(String date) {
+        try {
+            this.date = dateFormat.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
     public float getSubTotal() { return subTotal; }
     public void setSubTotal(float subTotal) { this.subTotal = subTotal; }
     public float getTax() { return tax; }
     public void setTax(float tax) { this.tax = tax; }
     public float getTotal() { return total; }
     public void setTotal(float total) { this.total = total; }
+
+    public ArrayList<TransactionProduct> getProducts() {
+        return arrTransProducts;
+    }
+
+    protected Transaction(Parcel in) {
+        id = UUID.fromString(in.readString());
+        try {
+            date = dateFormat.parse(in.readString());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        subTotal = in.readFloat();
+        tax = in.readFloat();
+        total = in.readFloat();
+        arrTransProducts = in.createTypedArrayList(TransactionProduct.CREATOR);
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id.toString());
+        dest.writeString(dateFormat.format(this.date));
+        dest.writeFloat(subTotal);
+        dest.writeFloat(tax);
+        dest.writeFloat(total);
+        dest.writeTypedList(arrTransProducts);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Transaction> CREATOR = new Creator<Transaction>() {
+        @Override
+        public Transaction createFromParcel(Parcel in) {
+            return new Transaction(in);
+        }
+
+        @Override
+        public Transaction[] newArray(int size) {
+            return new Transaction[size];
+        }
+    };
 }

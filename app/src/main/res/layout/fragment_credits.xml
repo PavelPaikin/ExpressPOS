@@ -2,15 +2,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackgroundLight"
-    tools:context="com.dev.lakik.expresspos.Fragments.OrdersFragment">
+    tools:context="com.dev.lakik.expresspos.Fragments.CreditsFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvOrders"
+        android:id="@+id/rvCredits"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="true"
-        android:paddingBottom="10dp" />
+        android:clipToPadding="true" />
 </FrameLayout>

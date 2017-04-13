@@ -1,6 +1,7 @@
 package com.dev.lakik.expresspos.Fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,6 +9,7 @@ import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -85,7 +87,14 @@ public class InventoryFragment extends Fragment implements RecyclerItemClickList
         rvInventory.setAdapter(mAdapter);
 
         rvInventory.setNestedScrollingEnabled(false);
-        rvInventory.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), this));
+
+
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        if(sharedPrefs.getBoolean("key_allow_editing", true)) {
+            rvInventory.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), this));
+        }
+
+        mListener.setToolbarTitle("Inventory");
     }
 
     @Override
@@ -133,5 +142,6 @@ public class InventoryFragment extends Fragment implements RecyclerItemClickList
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
         void editProduct(Inventory inventory, boolean edit);
+        void setToolbarTitle(String title);
     }
 }
