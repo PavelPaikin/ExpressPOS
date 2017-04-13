@@ -213,6 +213,7 @@ public class CreateProductFragment extends Fragment {
         }
     }
 
+    //Submit button menu
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.create_product_menu, menu);

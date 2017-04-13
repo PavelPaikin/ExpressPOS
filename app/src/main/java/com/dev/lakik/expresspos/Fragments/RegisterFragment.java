@@ -108,10 +108,7 @@ public class RegisterFragment extends Fragment {
 
                     Company newCompany = new Company(companyName, email, password, email, imagePath);
                     newCompany.save();
-
-                    System.out.println("--NEW COMPANY CREATED--");
-                    newCompany.printObject();
-
+                    getActivity().getSupportFragmentManager().beginTransaction().addToBackStack(null).replace(R.id.splash_mainContainer, new SplashFragment()).commit();
 
                 }
 

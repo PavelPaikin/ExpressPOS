@@ -3,7 +3,11 @@ package com.dev.lakik.expresspos;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -29,21 +33,22 @@ import com.dev.lakik.expresspos.Fragments.FullScannerFragment;
 import com.dev.lakik.expresspos.Fragments.InventoryFragment;
 import com.dev.lakik.expresspos.Fragments.OrdersFragment;
 import com.dev.lakik.expresspos.Fragments.POSFragment;
+import com.dev.lakik.expresspos.Model.Company;
 import com.dev.lakik.expresspos.Model.Const;
 import com.dev.lakik.expresspos.Model.Inventory;
 import com.dev.lakik.expresspos.Model.Product;
 import com.dev.lakik.expresspos.Model.ProductImage;
 import com.soundcloud.android.crop.Crop;
 
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import static java.lang.System.in;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        LoginFragment.OnFragmentInteractionListener,
-        SplashFragment.OnFragmentInteractionListener,
-        RegisterFragment.OnFragmentInteractionListener,
         InventoryFragment.OnFragmentInteractionListener,
         CreateProductFragment.OnFragmentInteractionListener,
         POSFragment.OnFragmentInteractionListener,
@@ -73,17 +78,17 @@ public class MainActivity extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new SplashFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new POSFragment()).commit();
 
-        changeFragment(POSFragment.newInstance(), false);
-        collapsingToolbarLayout.setTitle("POS");
+        //changeFragment(POSFragment.newInstance(), false);
+        //collapsingToolbarLayout.setTitle("POS");
     }
 
     @Override
@@ -146,6 +151,9 @@ public class MainActivity extends AppCompatActivity
                 appBarLayout.collapseToolbar();
                 collapsingToolbarLayout.setTitle("Orders");
                 break;
+            case R.id.nav_logout:
+                Intent intent = new Intent(this, SplashActivity.class);
+                startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -187,6 +195,8 @@ public class MainActivity extends AppCompatActivity
                 appBarLayout.collapseToolbar();
                 collapsingToolbarLayout.setTitle("");
                 break;
+
+
         }
     }
 
