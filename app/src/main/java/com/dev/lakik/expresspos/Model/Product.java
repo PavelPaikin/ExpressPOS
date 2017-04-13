@@ -52,11 +52,23 @@ public class Product extends ProductHelper implements Parcelable {
         this.description = description;
         this.price = price;
 
-        //this.imageArray = ProductImage.getAllRecordsForProduct(id);
+        //this.imageArray = ProductImageFragment.getAllRecordsForProduct(id);
     }
 
     public void loadImages(){
         this.imageArray = ProductImage.getAllRecordsForProduct(this.id.toString());
+    }
+
+    public boolean hasImages(){
+        return this.imageArray.size() > 0;
+    }
+
+    public ProductImage getImageByID(String id){
+        ProductImage img = null;
+        for(ProductImage p : imageArray){
+            if(p.getId().equals(id)) img = p;
+        }
+        return img;
     }
 
     //Save current item to database if exists updates record
@@ -91,13 +103,12 @@ public class Product extends ProductHelper implements Parcelable {
 
     public void addImage(ProductImage image){
         image.setProduct_id(id);
-        //image.save();
         imageArray.add(image);
     }
 
     public void removeImage(ProductImage image){
-        imageArray.remove(image);
         image.delete();
+        imageArray.remove(image);
     }
 
     public void printObject(){

@@ -36,6 +36,7 @@ import com.dev.lakik.expresspos.Model.Transaction;
 import com.dev.lakik.expresspos.Model.TransactionProduct;
 import com.dev.lakik.expresspos.R;
 import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -47,6 +48,7 @@ import static android.R.attr.id;
 public class POSFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
+    private FloatingActionMenu famPOS;
 
     public POSFragment() {
         // Required empty public constructor
@@ -113,16 +115,20 @@ public class POSFragment extends Fragment {
 
         //RecyclerView for the product CardView
         rv = (RecyclerView) view.findViewById(R.id.pos_recyclerView);
+        rv.setNestedScrollingEnabled(false);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         final RVAdapter adapter = new RVAdapter(prodArray);
         rv.setAdapter(adapter);
         calculateTotal();
 
+        famPOS = (FloatingActionMenu)view.findViewById(R.id.pos_fam);
+
+
         FloatingActionButton fabScanProduct = (FloatingActionButton)view.findViewById(R.id.fab_scan_product);
         fabScanProduct.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onFragmentInteraction(Uri.parse(Const.SCANNER_FRAGMENT_FROM_INVENTORY));
+                mListener.onFragmentInteraction(Uri.parse(Const.SCANNER_FRAGMENT_FROM_POS));
             }
         });
 
@@ -148,6 +154,8 @@ public class POSFragment extends Fragment {
                         alertDialog.cancel();
                         adapter.notifyDataSetChanged();
                         calculateTotal();
+
+                        famPOS.close(true);
                     }
                 });
 
@@ -200,6 +208,12 @@ public class POSFragment extends Fragment {
         total = "$" + round(subtotal * 1.13, 2);
         totalNumTV.setText(total);
 
+    }
+
+    public void addProduct(Product product){
+        prodArray.add(product);
+        calculateTotal();
+        famPOS.close(true);
     }
 
     /*

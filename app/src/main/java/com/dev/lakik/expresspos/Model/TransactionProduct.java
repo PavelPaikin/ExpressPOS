@@ -18,12 +18,21 @@ public class TransactionProduct extends TransactionProductHelper {
 
     private UUID transactionId;
     private UUID productId;
-    private float price;
+    private double price;
     private int amount;
 
     private Product product;
 
     public TransactionProduct(){}
+
+    public TransactionProduct(Product product){
+        this.transactionId = UUID.randomUUID();
+        this.productId = UUID.fromString(product.getId());
+        this.price = product.getPrice();
+        this.amount = 1;
+
+        this.product = product;
+    }
 
 
     public TransactionProduct(String transactionId, String productId, float price, int amount) {
@@ -53,6 +62,14 @@ public class TransactionProduct extends TransactionProductHelper {
         Log.d("DBHelper", "inserted id: " + id);
     }
 
+    public void addAmount(){
+        this.amount++;
+    }
+
+    public void removeAmount(){
+        this.amount--;
+    }
+
     //delete curent item from table
     public void delete(){
         SQLiteDatabase db = DBHelper.Instance().getDB();
@@ -75,8 +92,9 @@ public class TransactionProduct extends TransactionProductHelper {
     public void setTransactionId(UUID id) { this.transactionId = id; }
     public String getProductId() { return productId.toString(); }
     public void setProductId(UUID product_id) { this.productId = product_id; }
-    public float getPrice() { return price; }
-    public void setPrice(float price) { this.price = price; }
+    public double getPrice() { return price; }
+    public void setPrice(double price) { this.price = price; }
     public int getAmount() { return amount; }
     public void setAmount(int amount) { this.amount = amount; }
+    public Product getProduct(){return product;}
 }

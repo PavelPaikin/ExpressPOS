@@ -6,14 +6,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
-/**
- * Used for listening to RecyclerView item clicks. You can either implement an OnItemClickListener
- * or extend SimpleOnItemClickListener and override its methods.
- * 
- * Licence: MIT
- * 
- * @author Leo Nikkilä <hello@lnikki.la>
- */
+
 public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener {
 
     protected OnItemClickListener listener;

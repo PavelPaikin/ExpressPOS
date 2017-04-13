@@ -38,6 +38,8 @@ import com.dev.lakik.expresspos.Model.Const;
 import com.dev.lakik.expresspos.Model.Inventory;
 import com.dev.lakik.expresspos.Model.Product;
 import com.dev.lakik.expresspos.Model.ProductImage;
+import com.soundcloud.android.crop.Crop;
+
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import java.util.ArrayList;
@@ -83,10 +85,10 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new POSFragment()).commit();
+        //getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new POSFragment()).commit();
 
-        //changeFragment(POSFragment.newInstance(), false);
-        //collapsingToolbarLayout.setTitle("POS");
+        changeFragment(POSFragment.newInstance(), false);
+        collapsingToolbarLayout.setTitle("POS");
     }
 
     @Override
@@ -118,6 +120,14 @@ public class MainActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        currentFragment.onActivityResult(requestCode, resultCode, data);
+
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -185,7 +195,21 @@ public class MainActivity extends AppCompatActivity
                 appBarLayout.collapseToolbar();
                 collapsingToolbarLayout.setTitle("");
                 break;
-
+            case Const.SCANNER_FRAGMENT_FROM_POS:
+                changeFragment(FullScannerFragment.newInstance(POSFragment.class.getName()), true);
+                appBarLayout.collapseToolbar();
+                collapsingToolbarLayout.setTitle("");
+                break;
+            case Const.RELOAD_CREATE_PRODUCT:
+                if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                    getSupportFragmentManager().popBackStack();
+                }
+                Inventory inv = ((CreateProductFragment)currentFragment).getInventory();
+                boolean mode = ((CreateProductFragment)currentFragment).getEdit();
+                changeFragment(CreateProductFragment.newInstance(inv, mode), true);
+                appBarLayout.collapseToolbar();
+                collapsingToolbarLayout.setTitle("");
+                break;
 
         }
     }
@@ -207,6 +231,8 @@ public class MainActivity extends AppCompatActivity
                 p.setUpc(barcode);
 
                 item.setProduct(p);
+            }else{
+                if(item.getProduct().hasImages()) item.getProduct().loadImages();
             }
 
             if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
@@ -221,7 +247,33 @@ public class MainActivity extends AppCompatActivity
             currentFragment = getCreateProductFragment();
             getSupportFragmentManager().popBackStack();
 
-            ((CreateProductFragment)currentFragment).setUPC(barcode);
+            //((CreateProductFragment)currentFragment).setUPC(barcode);
+
+            Inventory item = Inventory.get(barcode);
+
+            if(item == null){
+
+                item = ((CreateProductFragment)currentFragment).getInventory();
+                item.getProduct().setUpc(barcode);
+
+            }else{
+                //item.printObject();
+                if(item.getProduct().hasImages()) item.getProduct().loadImages();
+            }
+
+            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                getSupportFragmentManager().popBackStack();
+            }
+
+            editProduct(item, false);
+        }
+
+        if(parent == POSFragment.class.getName()){
+            currentFragment = getPOSFragment();
+            getSupportFragmentManager().popBackStack();
+
+            Inventory inv = Inventory.get(barcode);
+            ((POSFragment)currentFragment).addProduct(inv.getProduct());
         }
     }
 
@@ -236,4 +288,17 @@ public class MainActivity extends AppCompatActivity
         }
         return fr;
     }
+
+    private Fragment getPOSFragment(){
+        FragmentManager fragManager = this.getSupportFragmentManager();
+        int count = this.getSupportFragmentManager().getBackStackEntryCount();
+
+        Fragment fr = null;
+        for(Fragment f : fragManager.getFragments()){
+            if(f instanceof POSFragment)
+                fr = f;
+        }
+        return fr;
+    }
+
 }
