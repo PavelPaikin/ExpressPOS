@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,10 +9,25 @@
     <!-- TODO: Update blank fragment layout -->
 
 
+    <Button
+        android:id="@+id/pos_submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="0dp"
+        android:layout_marginRight="8dp"
+        android:text="Submit"
+        fab:layout_constraintBottom_toBottomOf="@+id/inventory_fam"
+        fab:layout_constraintRight_toLeftOf="@+id/inventory_fam" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/pos_recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        fab:layout_constraintLeft_toLeftOf="parent"
+        fab:layout_constraintRight_toRightOf="parent"
+        fab:layout_constraintTop_toTopOf="parent"
+        android:layout_marginBottom="8dp"
+        fab:layout_constraintBottom_toTopOf="@+id/pos_bottomImg" />
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/inventory_fam"
@@ -42,7 +57,16 @@
         fab:menu_labels_textSize="14sp"
         fab:menu_openDirection="up"
         fab:menu_shadowColor="#66000000"
-        fab:menu_showShadow="true">
+        fab:menu_showShadow="true"
+        android:layout_marginBottom="8dp"
+        fab:layout_constraintBottom_toTopOf="@+id/pos_bottomImg"
+        android:layout_marginRight="8dp"
+        fab:layout_constraintRight_toRightOf="parent"
+        android:layout_marginLeft="8dp"
+        fab:layout_constraintLeft_toLeftOf="parent"
+        fab:layout_constraintHorizontal_bias="1.0"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_scan_product"
@@ -69,4 +93,44 @@
         />
 
     </com.github.clans.fab.FloatingActionMenu>
-</FrameLayout>
+
+    <ImageView
+        android:id="@+id/pos_bottomImg"
+        android:layout_width="508dp"
+        android:layout_height="56dp"
+        fab:layout_constraintBottom_toBottomOf="parent"
+        fab:layout_constraintHorizontal_bias="0.0"
+        fab:layout_constraintLeft_toLeftOf="parent"
+        fab:layout_constraintRight_toRightOf="parent"
+        fab:srcCompat="@color/cardview_shadow_start_color" />
+
+    <TextView
+        android:id="@+id/pos_totalTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="10dp"
+        android:text="Total:"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        fab:layout_constraintHorizontal_bias="0.025"
+        fab:layout_constraintLeft_toLeftOf="parent"
+        fab:layout_constraintRight_toRightOf="parent"
+        fab:layout_constraintTop_toTopOf="@+id/pos_bottomImg"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp" />
+
+    <TextView
+        android:id="@+id/pos_totalNumTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:text="$3.99"
+        android:textSize="24sp"
+        fab:layout_constraintBottom_toBottomOf="@+id/pos_totalTV"
+        fab:layout_constraintLeft_toRightOf="@+id/pos_totalTV"
+        fab:layout_constraintTop_toTopOf="@+id/pos_totalTV"
+        android:layout_marginStart="8dp" />
+
+</android.support.constraint.ConstraintLayout>
