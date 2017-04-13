@@ -20,6 +20,9 @@ public class ProductImageHelper {
     public static String TABLE_NAME = "ProductImage";
 
     //Define all columns and their type
+    public static String NAME_COLUMN_ID = "id";
+    public static String TYPE_COLUMN_ID = "text";
+
     public static String NAME_COLUMN_PRODUCT_ID = "product_id";
     public static String TYPE_COLUMN_PRODUCT_ID = "text";
 
@@ -35,6 +38,7 @@ public class ProductImageHelper {
         sb.append("CREATE TABLE ");
         sb.append(TABLE_NAME);
         sb.append(" (");
+        sb.append(NAME_COLUMN_ID + " " + TYPE_COLUMN_ID  + " primary key, ");
         sb.append(NAME_COLUMN_PRODUCT_ID + " " + TYPE_COLUMN_PRODUCT_ID + ", ");
         sb.append(NAME_COLUMN_IMAGE_PATH + " " + TYPE_COLUMN_IMAGE_PATH + ")");
 
@@ -56,6 +60,7 @@ public class ProductImageHelper {
         Cursor c = db.query(TABLE_NAME, null, null, null, null, null, NAME_COLUMN_PRODUCT_ID + " DESC");
         while(c.moveToNext()){
             ProductImage item = new ProductImage();
+            item.setId(UUID.fromString(c.getString(c.getColumnIndex(NAME_COLUMN_ID))));
             item.setProduct_id(UUID.fromString(c.getString(c.getColumnIndex(NAME_COLUMN_PRODUCT_ID))));
             item.setImagePath(c.getString(c.getColumnIndex(NAME_COLUMN_IMAGE_PATH)));
 
@@ -73,6 +78,7 @@ public class ProductImageHelper {
         Cursor c = db.rawQuery("Select * from " + TABLE_NAME + " where " + NAME_COLUMN_PRODUCT_ID + "= '" + id + "'", null);
         while(c.moveToNext()){
             ProductImage item = new ProductImage();
+            item.setId(UUID.fromString(c.getString(c.getColumnIndex(NAME_COLUMN_ID))));
             item.setProduct_id(UUID.fromString(c.getString(c.getColumnIndex(NAME_COLUMN_PRODUCT_ID))));
             item.setImagePath(c.getString(c.getColumnIndex(NAME_COLUMN_IMAGE_PATH)));
 

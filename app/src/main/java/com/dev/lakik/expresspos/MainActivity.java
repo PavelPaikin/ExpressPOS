@@ -1,5 +1,6 @@
 package com.dev.lakik.expresspos;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -32,6 +33,7 @@ import com.dev.lakik.expresspos.Model.Const;
 import com.dev.lakik.expresspos.Model.Inventory;
 import com.dev.lakik.expresspos.Model.Product;
 import com.dev.lakik.expresspos.Model.ProductImage;
+import com.soundcloud.android.crop.Crop;
 
 import java.util.UUID;
 
@@ -78,10 +80,10 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new SplashFragment()).commit();
+        //getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, new SplashFragment()).commit();
 
-        //changeFragment(POSFragment.newInstance(), false);
-        //collapsingToolbarLayout.setTitle("POS");
+        changeFragment(POSFragment.newInstance(), false);
+        collapsingToolbarLayout.setTitle("POS");
     }
 
     @Override
@@ -113,6 +115,14 @@ public class MainActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        currentFragment.onActivityResult(requestCode, resultCode, data);
+
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -177,8 +187,6 @@ public class MainActivity extends AppCompatActivity
                 appBarLayout.collapseToolbar();
                 collapsingToolbarLayout.setTitle("");
                 break;
-
-
         }
     }
 
@@ -199,6 +207,8 @@ public class MainActivity extends AppCompatActivity
                 p.setUpc(barcode);
 
                 item.setProduct(p);
+            }else{
+                if(item.getProduct().hasImages()) item.getProduct().loadImages();
             }
 
             if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
@@ -228,4 +238,5 @@ public class MainActivity extends AppCompatActivity
         }
         return fr;
     }
+
 }

@@ -1,12 +1,17 @@
 package com.dev.lakik.expresspos.Fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,11 +23,23 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import com.dev.lakik.expresspos.Adapters.ProductImagesAdapter;
 import com.dev.lakik.expresspos.Helpers.InputValidationHelper;
 import com.dev.lakik.expresspos.Model.Const;
 import com.dev.lakik.expresspos.Model.Inventory;
 import com.dev.lakik.expresspos.Model.Product;
+import com.dev.lakik.expresspos.Model.ProductImage;
 import com.dev.lakik.expresspos.R;
+import com.github.clans.fab.FloatingActionButton;
+import com.rd.PageIndicatorView;
+import com.soundcloud.android.crop.Crop;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import static android.app.Activity.RESULT_OK;
 
 public class CreateProductFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
@@ -42,24 +59,34 @@ public class CreateProductFragment extends Fragment {
     private TextInputLayout etAmountWrap;
     private TextInputLayout etPriceWrap;
 
+    private ViewPager vpImages;
+
     private ProductFormValidatorHelper validator;
 
     private Inventory inventory;
     private Product product;
+    private ProductImagesAdapter imageAdapter;
 
     private boolean edit = false;
 
     private String loadUPC = "";
 
+    FloatingActionButton fabTakePicture;
+
     private boolean initialized = false;
+    private static final int CAMERA_INTENT = 1;
+    private String imageLocation;
+    private PageIndicatorView pageIndicatorView;
+
+    private int currentPosition = 0;
 
     public CreateProductFragment() {
         // Required empty public constructor
     }
     public static CreateProductFragment newInstance() {
         CreateProductFragment fragment = new CreateProductFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
+        //Bundle args = new Bundle();
+        //fragment.setArguments(args);
         return fragment;
     }
 
@@ -80,6 +107,13 @@ public class CreateProductFragment extends Fragment {
             inventory = getArguments().getParcelable("inventory");
             edit = getArguments().getBoolean("edit");
         }
+
+        if(inventory == null){
+            inventory = new Inventory();
+        }else{
+            if(inventory.getProduct().hasImages()) inventory.getProduct().loadImages();
+        }
+
     }
 
 
@@ -105,6 +139,16 @@ public class CreateProductFragment extends Fragment {
         etPriceWrap = (TextInputLayout)view.findViewById(R.id.etPriceWrap);
         etPriceWrap = (TextInputLayout)view.findViewById(R.id.etPriceWrap);
 
+        vpImages = (ViewPager)view.findViewById(R.id.productImages);
+        imageAdapter = new ProductImagesAdapter(getChildFragmentManager());
+        vpImages.setAdapter(imageAdapter);
+
+        pageIndicatorView = (PageIndicatorView) view.findViewById(R.id.pageIndicatorView);
+        pageIndicatorView.setViewPager(vpImages);
+
+        fabTakePicture = (FloatingActionButton)view.findViewById(R.id.fab_take_picture);
+        fabTakePicture.setOnClickListener(btnTakePictureListener);
+
         validator = new ProductFormValidatorHelper();
 
     }
@@ -113,14 +157,12 @@ public class CreateProductFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
+        setData();
+
         if(loadUPC != ""){
             etUPC.setText(loadUPC);
         }
 
-        if(inventory != null){
-            inventory.printObject();
-            setData();
-        }
     }
 
     @Override
@@ -133,6 +175,7 @@ public class CreateProductFragment extends Fragment {
         Inventory inv = Inventory.get(upc);
         if(inv != null){
             inventory = inv;
+            if(inventory.getProduct().hasImages()) inventory.getProduct().loadImages();
         }else{
             loadUPC = upc;
         }
@@ -148,6 +191,8 @@ public class CreateProductFragment extends Fragment {
         }
         if(inventory.getProduct().getPrice() != 0)
             etPrice.setText(String.valueOf(inventory.getProduct().getPrice()));
+
+        imageAdapter.setData(inventory.getProduct().getImages());
     }
 
     @Override
@@ -180,11 +225,11 @@ public class CreateProductFragment extends Fragment {
 
         if (id == R.id.action_submit) {
 
-            if(inventory == null) {
-                product = new Product();
-            }else{
+            //if(inventory == null) {
+            //    product = new Product();
+            //}else{
                 product = inventory.getProduct();
-            }
+            //}
 
             product.setName(etProductName.getText().toString());
             product.setNumber(etProductNumber.getText().toString().toUpperCase());
@@ -207,12 +252,12 @@ public class CreateProductFragment extends Fragment {
             if(!validator.validateAmount(etAmount.getText().toString())) {
                 return  false;
             }else{
-                if(inventory == null) {
-                    inventory = new Inventory(product, Integer.parseInt(etAmount.getText().toString()));
-                }else{
-                    if(edit) inventory.setAmount(Integer.parseInt(etAmount.getText().toString()));
-                    else inventory.setAmount(inventory.getAmount() + Integer.parseInt(etAmount.getText().toString()));
-                }
+                //if(inventory == null) {
+                //    inventory = new Inventory(product, Integer.parseInt(etAmount.getText().toString()));
+                //}else{
+                if(edit) inventory.setAmount(Integer.parseInt(etAmount.getText().toString()));
+                else inventory.setAmount(inventory.getAmount() + Integer.parseInt(etAmount.getText().toString()));
+                //}
 
                 inventory.save();
             }
@@ -230,6 +275,87 @@ public class CreateProductFragment extends Fragment {
             mListener.onFragmentInteraction(Uri.parse(Const.SCANNER_FRAGMENT_FROM_CREATE_PRODUCT));
         }
     };
+
+    View.OnClickListener btnTakePictureListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            File picture = null;
+            try{
+                picture = createImage();
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+            Intent i = new Intent();
+            i.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+            i.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(picture));
+            if(i.resolveActivity(getActivity().getPackageManager()) != null){
+                startActivityForResult(i, CAMERA_INTENT);
+            }
+        }
+    };
+
+    View.OnLongClickListener vrImagesLongClickListener = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            Log.d("asdd", "Position: " + vpImages.getCurrentItem());
+            return true;
+        }
+    };
+
+    public void removeImage(String id){
+
+        currentPosition = vpImages.getCurrentItem();
+
+        ProductImage img = inventory.getProduct().getImageByID(id);
+        inventory.getProduct().removeImage(img);
+/*
+        inventory.getProduct().printObject();
+        vpImages.removeAllViews();
+        vpImages.setAdapter(imageAdapter);
+        pageIndicatorView.setViewPager(vpImages);
+
+        if(currentPosition >= imageAdapter.getCount()){
+            currentPosition = imageAdapter.getCount()-1;
+        }
+
+        vpImages.setCurrentItem(currentPosition);
+*/
+
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.detach(this).attach(this).commit();
+    }
+
+    private File createImage() throws IOException {
+        //Create a timestamp to help create a collision free name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHss").format(new Date());
+        //Create the name of the image
+        String fileName = "expresspos" + timeStamp;
+        //Grab the directory we want to save the image
+        File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        //Create the image in that directory
+        File picture = File.createTempFile(fileName, ".jpg", directory);
+        //Save the location of the image
+        imageLocation = picture.getAbsolutePath();
+        return picture;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == CAMERA_INTENT && resultCode == RESULT_OK){
+
+            File pic = new File(imageLocation);
+            Crop.of(Uri.fromFile(pic), Uri.fromFile(pic)).asSquare().start(getActivity());
+        }
+
+        if (requestCode == Crop.REQUEST_CROP && resultCode == RESULT_OK) {
+            inventory.getProduct().addImage(new ProductImage(imageLocation));
+            imageAdapter.notifyDataSetChanged();
+
+            vpImages.setCurrentItem(imageAdapter.getCount() - 1, true);
+            //pageIndicatorView.setCount(imageAdapter.getCount());
+        }
+    }
 
 
     @Override

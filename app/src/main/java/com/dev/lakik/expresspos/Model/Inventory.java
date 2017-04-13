@@ -24,7 +24,11 @@ public class Inventory extends InventoryHelper implements Parcelable {
 
     private Product product;
 
-    public Inventory(){this.id = UUID.randomUUID();}
+    public Inventory(){
+        this.id = UUID.randomUUID();
+        this.product = new Product();
+        this.product_id = UUID.fromString(product.getId());
+    }
 
     public Inventory(Product product, int amount) {
         this.id = UUID.randomUUID();
@@ -104,12 +108,14 @@ public class Inventory extends InventoryHelper implements Parcelable {
     }
 
     protected Inventory(Parcel in) {
+        id = UUID.fromString(in.readString());
         amount = in.readInt();
         product = in.readParcelable(Product.class.getClassLoader());
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id.toString());
         dest.writeInt(amount);
         dest.writeParcelable(product, flags);
     }

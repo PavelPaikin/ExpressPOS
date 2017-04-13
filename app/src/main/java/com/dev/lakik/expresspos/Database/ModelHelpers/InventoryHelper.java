@@ -59,7 +59,7 @@ public class InventoryHelper {
 
         ArrayList<Inventory> tempArray = new ArrayList<>();
 
-        String sql = "SELECT Inventory.id as inventory_id, Inventory.amount, Product.*, ProductImage.imagePath " +
+        String sql = "SELECT Inventory.id as inventory_id, Inventory.amount, Product.*, ProductImage.imagePath, ProductImage.id as image_id " +
                      "FROM Inventory " +
                      "INNER JOIN Product ON Inventory.product_id = Product.id " +
                      "LEFT JOIN ProductImage ON Inventory.product_id = ProductImage.product_id " +
@@ -81,9 +81,14 @@ public class InventoryHelper {
             product.setPrice(c.getDouble(c.getColumnIndex("price")));
             product.setDescription(c.getString(c.getColumnIndex("description")));
 
-            ProductImage image = new ProductImage(c.getColumnName(c.getColumnIndex("imagePath")));
+            String imagePath = c.getString(c.getColumnIndex("imagePath"));
 
-            product.addImage(image);
+            if(imagePath != null){
+                ProductImage image = new ProductImage();
+                image.setId(UUID.fromString(c.getString(c.getColumnIndex("image_id"))));
+                image.setImagePath(imagePath);
+                product.addImage(image);
+            }
 
             item.setProduct(product);
 
@@ -98,7 +103,7 @@ public class InventoryHelper {
     public static Inventory get(String upc){
         SQLiteDatabase db = DBHelper.Instance().getDB();
 
-        String sql = "SELECT Inventory.id as inventory_id, Inventory.amount, Product.*, ProductImage.imagePath " +
+        String sql = "SELECT Inventory.id as inventory_id, Inventory.amount, Product.*, ProductImage.imagePath, ProductImage.id as image_id  " +
                      "FROM Inventory " +
                      "INNER JOIN Product ON Inventory.product_id = Product.id " +
                      "LEFT JOIN ProductImage ON Inventory.product_id = ProductImage.product_id " +
@@ -123,9 +128,14 @@ public class InventoryHelper {
             product.setPrice(c.getDouble(c.getColumnIndex("price")));
             product.setDescription(c.getString(c.getColumnIndex("description")));
 
-            ProductImage image = new ProductImage(c.getColumnName(c.getColumnIndex("imagePath")));
+            String imagePath = c.getString(c.getColumnIndex("imagePath"));
 
-            product.addImage(image);
+            if(imagePath != null){
+                ProductImage image = new ProductImage();
+                image.setId(UUID.fromString(c.getString(c.getColumnIndex("image_id"))));
+                image.setImagePath(imagePath);
+                product.addImage(image);
+            }
 
             item.setProduct(product);
 
