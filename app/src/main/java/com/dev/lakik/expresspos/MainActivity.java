@@ -24,6 +24,7 @@ import android.view.MenuItem;
 
 import com.dev.lakik.expresspos.Fragments.CreditsFragment;
 import com.dev.lakik.expresspos.Fragments.LoginFragment;
+import com.dev.lakik.expresspos.Fragments.POSPaymentFragment;
 import com.dev.lakik.expresspos.Fragments.POSSummaryFragment;
 import com.dev.lakik.expresspos.Fragments.RegisterFragment;
 import com.dev.lakik.expresspos.Fragments.SettingsFragment;
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity
         CreateProductFragment.OnFragmentInteractionListener,
         POSFragment.OnFragmentInteractionListener,
         POSSummaryFragment.OnFragmentInteractionListener,
+        POSPaymentFragment.OnFragmentInteractionListener,
         OrdersFragment.OnFragmentInteractionListener,
         FullScannerFragment.OnFragmentInteractionListener{
 
@@ -190,6 +192,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
         switch (uri.toString()){
+            case Const.PAYMENT_FRAGMENT_FROM_POS:
+                Transaction trans = ((POSFragment)currentFragment).getTransaction();
+                changeFragment(POSPaymentFragment.newInstance(trans), false);
+                appBarLayout.collapseToolbar();
+                toolbar.setTitle("" + trans.getTotal());
+                break;
             case Const.CREATE_NEW_PRODUCT_FRAGMENT:
                 changeFragment(CreateProductFragment.newInstance(), true);
                 appBarLayout.collapseToolbar();

@@ -104,6 +104,8 @@ public class POSFragment extends Fragment {
 
     Button submitBtn;
 
+    Transaction thisTrans;
+
     double subtotal;
 
     @Override
@@ -117,6 +119,7 @@ public class POSFragment extends Fragment {
         totalNumTV = (TextView) view.findViewById(R.id.pos_totalNumTV);
 
         inventoryArray = Inventory.getAllRecords();//Populate the inventory array from the database
+        thisTrans = new Transaction();
 
         //RecyclerView for the product CardView
         rv = (RecyclerView) view.findViewById(R.id.pos_recyclerView);
@@ -159,7 +162,10 @@ public class POSFragment extends Fragment {
                         @Override
                         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                             Product newProduct = inventoryArray.get(i).getProduct();
+//                            prodArray.add(newProduct);
+                            thisTrans.addProduct(newProduct);
                             prodArray.add(newProduct);
+                            //prodArray = thisTrans.getProducts();
                             alertDialog.cancel();
                             adapter.notifyDataSetChanged();
                             calculateTotal();
@@ -190,21 +196,23 @@ public class POSFragment extends Fragment {
                 tTax = (float) round(subtotal * tax, 2);
                 tTotal = (float) round(subtotal * (1 + tax), 2);
 
-                Transaction newTrans = new Transaction("Today", tSub, tTax, tTotal);
-                newTrans.save();
+                thisTrans.setSubTotal(tSub);
+                thisTrans.setTax(tTax);
+                thisTrans.setTotal(tTotal);
+                //thisTrans.save();
+                System.out.println("Product Count: " + thisTrans.getProductsCount());
 
-                for (Product item : prodArray) {
-                    TransactionProduct transProduct = new TransactionProduct(newTrans.getId(), item.getId(), (float) item.getPrice(), 1);
-                    transProduct.save();
-                    transactionProdArray.add(transProduct);
-                }
-
+                mListener.onFragmentInteraction(Uri.parse(Const.PAYMENT_FRAGMENT_FROM_POS));
 
             }
             });
 
 
         return view;
+    }
+
+    public Transaction getTransaction() {
+        return thisTrans;
     }
 
     @Override
@@ -226,16 +234,17 @@ public class POSFragment extends Fragment {
         String total = "$" + round(subtotal, 2);
         subtotalNumTV.setText(total);
 
-        total = "$" + round(subtotal * 0.13, 2);
+        total = "$" + round(subtotal * tax, 2);
         taxNumTV.setText(total);
 
-        total = "$" + round(subtotal * 1.13, 2);
+        total = "$" + round(subtotal * (1 + tax), 2);
         totalNumTV.setText(total);
 
     }
 
     public void addProduct(Product product){
-        prodArray.add(product);
+        //prodArray.add(product);
+        thisTrans.addProduct(product);
         calculateTotal();
         famPOS.close(true);
     }
