@@ -92,13 +92,16 @@ public class POSSummaryFragment extends Fragment {
         public class ProductViewHolder extends RecyclerView.ViewHolder {
 
             CardView cv;
-            TextView prodNameTV, priceTV;
+            TextView prodNameTV, upcTV, countTV, unitPriceTV, totalPriceTV;
 
             ProductViewHolder(View itemView) {
                 super(itemView);
                 cv = (CardView) itemView.findViewById(R.id.summary_cardview);
                 prodNameTV = (TextView) itemView.findViewById(R.id.summ_prodNameTV);
-                priceTV = (TextView) itemView.findViewById(R.id.summ_priceTV);
+                upcTV = (TextView) itemView.findViewById(R.id.summ_upcTV);
+                countTV = (TextView) itemView.findViewById(R.id.summ_countTV);
+                unitPriceTV = (TextView) itemView.findViewById(R.id.summ_unitPriceTV);
+                totalPriceTV = (TextView) itemView.findViewById(R.id.summ_totalPriceTV);
 
             }
 
@@ -120,12 +123,20 @@ public class POSSummaryFragment extends Fragment {
         public void onBindViewHolder(ProductViewHolder pvh, int i) {
             TransactionProduct transProd = transactionProducts.get(i);
             Product prod = transProd.getProduct();
+            double unitPrice = transProd.getPrice();
+            int unitCount = transProd.getAmount();
 
             pvh.prodNameTV.setText(prod.getName());
 
-            String priceString = transProd.getPrice() + "";
+            String countString = "x" + unitCount;
+            pvh.countTV.setText(countString);
 
-            pvh.priceTV.setText(priceString);
+            String unitPriceString = "$" + unitPrice;
+            pvh.unitPriceTV.setText(unitPriceString);
+
+            String totalPriceString = "= $" + (unitPrice * unitCount);
+            pvh.totalPriceTV.setText(totalPriceString);
+
         }
 
         @Override
