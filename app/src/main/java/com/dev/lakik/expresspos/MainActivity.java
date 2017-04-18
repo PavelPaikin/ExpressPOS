@@ -192,11 +192,17 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
         switch (uri.toString()){
-            case Const.PAYMENT_FRAGMENT_FROM_POS:
-                Transaction trans = ((POSFragment)currentFragment).getTransaction();
-                changeFragment(POSPaymentFragment.newInstance(trans), false);
+            case Const.SUMMARY_FRAGMENT_FROM_PAYMENT:
+                Transaction summTrans = ((POSPaymentFragment)currentFragment).getTransaction();
+                changeFragment(POSSummaryFragment.newInstance(summTrans), false);
                 appBarLayout.collapseToolbar();
-                toolbar.setTitle("" + trans.getTotal());
+                toolbar.setTitle("Purchase Receipt");
+                break;
+            case Const.PAYMENT_FRAGMENT_FROM_POS:
+                Transaction payTrans = ((POSFragment)currentFragment).getTransaction();
+                changeFragment(POSPaymentFragment.newInstance(payTrans), false);
+                appBarLayout.collapseToolbar();
+                toolbar.setTitle("" + payTrans.getTotal());
                 break;
             case Const.CREATE_NEW_PRODUCT_FRAGMENT:
                 changeFragment(CreateProductFragment.newInstance(), true);

@@ -12,9 +12,11 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.dev.lakik.expresspos.Model.Const;
 import com.dev.lakik.expresspos.Model.Transaction;
 import com.dev.lakik.expresspos.R;
 
@@ -58,11 +60,13 @@ public class POSPaymentFragment extends Fragment {
     private Transaction transaction;
 
     EditText nameET, cardNumberET, monthET, yearET, cvvET;
-    TextInputLayout cardNumberETWrap;
+    TextInputLayout nameETWrap, cardNumberETWrap, monthETWrap, yearETWrap, cvvETWrap;
 
     ImageView brandImg;
 
     String name, cardNumber, month, year, cvv;
+
+    Button submitBtn;
 
 
 
@@ -77,12 +81,18 @@ public class POSPaymentFragment extends Fragment {
         cardNumberETWrap = (TextInputLayout) view.findViewById(R.id.pay_cardNumberETWrap);
 
         monthET = (EditText) view.findViewById(R.id.pay_monthET);
-
         yearET = (EditText) view.findViewById(R.id.pay_yearET);
-
         cvvET = (EditText) view.findViewById(R.id.pay_cvvET);
-
         brandImg = (ImageView) view.findViewById(R.id.pay_brandImg);
+
+        submitBtn = (Button) view.findViewById(R.id.pay_submitBtn);
+
+        submitBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.onFragmentInteraction(Uri.parse(Const.SUMMARY_FRAGMENT_FROM_PAYMENT));
+            }
+        });
 
 
 
@@ -128,6 +138,10 @@ public class POSPaymentFragment extends Fragment {
 
 
         return view;
+    }
+
+    public Transaction getTransaction() {
+        return transaction;
     }
 
     @Override

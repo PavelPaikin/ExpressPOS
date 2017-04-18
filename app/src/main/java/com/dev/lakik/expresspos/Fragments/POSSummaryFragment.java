@@ -5,12 +5,20 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.dev.lakik.expresspos.Model.Product;
 import com.dev.lakik.expresspos.Model.Transaction;
+import com.dev.lakik.expresspos.Model.TransactionProduct;
 import com.dev.lakik.expresspos.R;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -55,18 +63,85 @@ public class POSSummaryFragment extends Fragment {
         }
     }
 
+    RecyclerView rv;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_possummary, container, false);
 
+        rv = (RecyclerView) view.findViewById(R.id.summ_recyclerView);
+        rv.setNestedScrollingEnabled(false);
+        rv.setLayoutManager(new LinearLayoutManager(getContext()));
+        final RVAdapter adapter = new RVAdapter(transaction.getProducts());
+        rv.setAdapter(adapter);
+
+
+
         return view;
     }
+
+
+    private class RVAdapter extends RecyclerView.Adapter<RVAdapter.ProductViewHolder> {
+
+        ArrayList<TransactionProduct> transactionProducts;
+
+        RVAdapter(ArrayList<TransactionProduct> transactionProducts) {
+            this.transactionProducts = transactionProducts;
+        }
+
+        public class ProductViewHolder extends RecyclerView.ViewHolder {
+
+            CardView cv;
+            TextView prodNameTV, priceTV;
+
+            ProductViewHolder(View itemView) {
+                super(itemView);
+                cv = (CardView) itemView.findViewById(R.id.summary_cardview);
+                prodNameTV = (TextView) itemView.findViewById(R.id.summ_prodNameTV);
+                priceTV = (TextView) itemView.findViewById(R.id.summ_priceTV);
+
+            }
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return transactionProducts.size();
+        }
+
+        @Override
+        public ProductViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.pos_summary_card, viewGroup, false);
+            ProductViewHolder pvh = new ProductViewHolder(v);
+            return pvh;
+        }
+
+        @Override
+        public void onBindViewHolder(ProductViewHolder pvh, int i) {
+            TransactionProduct transProd = transactionProducts.get(i);
+            Product prod = transProd.getProduct();
+
+            pvh.prodNameTV.setText(prod.getName());
+
+            String priceString = transProd.getPrice() + "";
+
+            pvh.priceTV.setText(priceString);
+        }
+
+        @Override
+        public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+            super.onAttachedToRecyclerView(recyclerView);
+        }
+
+    }
+
+
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mListener.setToolbarTitle("Summary");
+        //mListener.setToolbarTitle("Summary");
     }
 
     // TODO: Rename method, update argument and hook method into UI event

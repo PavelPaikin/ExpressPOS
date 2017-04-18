@@ -40,7 +40,9 @@ import com.dev.lakik.expresspos.Model.TransactionProduct;
 import com.dev.lakik.expresspos.R;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -98,7 +100,7 @@ public class POSFragment extends Fragment {
 
     RecyclerView rv;
 
-    TextView subtotalNumTV, taxNumTV, totalNumTV;
+    TextView totalNumTV;
 
     ListView listView;
 
@@ -114,8 +116,6 @@ public class POSFragment extends Fragment {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_pos, container, false);
 
-        subtotalNumTV = (TextView) view.findViewById(R.id.pos_subtotalNumTV);
-        taxNumTV = (TextView) view.findViewById(R.id.pos_taxNumTV);
         totalNumTV = (TextView) view.findViewById(R.id.pos_totalNumTV);
 
         inventoryArray = Inventory.getAllRecords();//Populate the inventory array from the database
@@ -200,7 +200,7 @@ public class POSFragment extends Fragment {
                 thisTrans.setTax(tTax);
                 thisTrans.setTotal(tTotal);
                 //thisTrans.save();
-                System.out.println("Product Count: " + thisTrans.getProductsCount());
+                //System.out.println("Product Count: " + thisTrans.getProductsCount());
 
                 mListener.onFragmentInteraction(Uri.parse(Const.PAYMENT_FRAGMENT_FROM_POS));
 
@@ -231,11 +231,12 @@ public class POSFragment extends Fragment {
             subtotal += product.getPrice();
         }
 
-        String total = "$" + round(subtotal, 2);
-        subtotalNumTV.setText(total);
+        String total;
+        //total = "$" + round(subtotal, 2);
+        //subtotalNumTV.setText(total);
 
-        total = "$" + round(subtotal * tax, 2);
-        taxNumTV.setText(total);
+        //total = "$" + round(subtotal * tax, 2);
+        //taxNumTV.setText(total);
 
         total = "$" + round(subtotal * (1 + tax), 2);
         totalNumTV.setText(total);
@@ -260,7 +261,7 @@ public class POSFragment extends Fragment {
         return bd.doubleValue();
     }
 
-    public class LVAdapter extends ArrayAdapter<Inventory> {
+    private class LVAdapter extends ArrayAdapter<Inventory> {
         public LVAdapter(Context context, ArrayList<Inventory> invs) {
             super(context, 0, invs);
         }
@@ -287,7 +288,7 @@ public class POSFragment extends Fragment {
 
     }
 
-    public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ProductViewHolder> {
+    private class RVAdapter extends RecyclerView.Adapter<RVAdapter.ProductViewHolder> {
 
         ArrayList<Product> products;
 
@@ -334,6 +335,10 @@ public class POSFragment extends Fragment {
             String priceStr = "$" + products.get(i).getPrice();
             pvh.prodPrice.setText(priceStr);
             pvh.countET.setText("1");
+
+            if (products.get(i).hasImages()) {
+                Picasso.with(getContext()).load(new File(products.get(i).getImages().get(0).getImagePath())).resize(200,200).centerInside().into(pvh.prodImg);
+            }
 
 
         }

@@ -130,4 +130,16 @@
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/ic_credit_card_black_24dp" />
 
+    <Button
+        android:id="@+id/pay_submitBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Submit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pay_brandImg" />
+
 </android.support.constraint.ConstraintLayout>
