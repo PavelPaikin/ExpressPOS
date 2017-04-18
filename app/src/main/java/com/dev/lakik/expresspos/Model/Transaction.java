@@ -122,7 +122,7 @@ public class Transaction extends TransactionHelper implements Parcelable {
         ContentValues cv = new ContentValues();
 
         cv.put(NAME_COLUMN_ID, this.id.toString());
-        cv.put(NAME_COLUMN_ID, this.company_id.toString());
+        cv.put(NAME_COLUMN_COMPANY_ID, this.company_id.toString());
         cv.put(NAME_COLUMN_DATE, dateFormat.format(this.date));
         cv.put(NAME_COLUMN_SUB_TOTAL, this.subTotal);
         cv.put(NAME_COLUMN_TAX, this.tax);

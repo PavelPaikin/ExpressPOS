@@ -37,6 +37,7 @@ import com.dev.lakik.expresspos.Model.Transaction;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -93,6 +94,11 @@ public class MainActivity extends AppCompatActivity
         imgCompanyPic = (CircleImageView)hView.findViewById(R.id.imgCompanyPic);
         tvCompanyName = (TextView)hView.findViewById(R.id.tvCompanyName);
         tvCompanyEmail = (TextView)hView.findViewById(R.id.tvCompanyEmail);
+
+        Transaction transaction = new Transaction(Company.instance.getId(), new Date(), 0f, 0f, 0f);
+        transaction.save();
+
+        Transaction.getAllRecords(Company.instance.getId());
     }
 
     @Override

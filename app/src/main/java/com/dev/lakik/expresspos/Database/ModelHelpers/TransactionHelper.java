@@ -9,6 +9,7 @@ import com.dev.lakik.expresspos.Model.Inventory;
 import com.dev.lakik.expresspos.Model.Transaction;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -17,7 +18,7 @@ import java.util.UUID;
 
 public class TransactionHelper {
 
-    public static String TABLE_NAME = "Transaction";
+    public static String TABLE_NAME = "Transact";
 
     //Define all columns and their type
     public static String NAME_COLUMN_ID = "id";
@@ -27,7 +28,7 @@ public class TransactionHelper {
     public static String TYPE_COLUMN_COMPANY_ID = "text";
 
     public static String NAME_COLUMN_DATE = "date";
-    public static String TYPE_COLUMN_DATE = "date";
+    public static String TYPE_COLUMN_DATE = "DATETIME";
 
     public static String NAME_COLUMN_SUB_TOTAL = "sub_total";
     public static String TYPE_COLUMN_SUB_TOTAL = "DECIMAL(16,2)";
@@ -69,7 +70,8 @@ public class TransactionHelper {
         SQLiteDatabase db = DBHelper.Instance().getDB();
 
         ArrayList<Transaction> tempArray = new ArrayList<>();
-        Cursor c = db.rawQuery("Select * from " + TABLE_NAME + " where " + NAME_COLUMN_COMPANY_ID + "= '" + comapanyID + "'", null);
+        Cursor c = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE " + NAME_COLUMN_COMPANY_ID + " = '" + comapanyID + "'", null);
+
         while(c.moveToNext()){
             Transaction item = new Transaction(c.getString(c.getColumnIndex(NAME_COLUMN_COMPANY_ID)));
             item.setId(c.getString(c.getColumnIndex(NAME_COLUMN_ID)));
