@@ -58,10 +58,11 @@ public class TransactionProductHelper {
     }
 
     //Get all items and return Array list with all items
-    public static ArrayList<TransactionProduct> getAllRecordsByID(String id){
+    public static ArrayList<TransactionProduct> getAllRecordsByID(String id, String companyID){
         SQLiteDatabase db = DBHelper.Instance().getDB();
 
         ArrayList<TransactionProduct> tempArray = new ArrayList<>();
+
         Cursor c = db.rawQuery("Select * from " + TABLE_NAME + " where " + NAME_COLUMN_TRANSACTION_ID + "= '" + id + "'", null);
         while(c.moveToNext()){
             TransactionProduct item = new TransactionProduct();
@@ -70,7 +71,7 @@ public class TransactionProductHelper {
             item.setPrice(c.getFloat(c.getColumnIndex(NAME_COLUMN_PRICE)));
             item.setAmount(c.getInt(c.getColumnIndex(NAME_COLUMN_AMOUNT)));
 
-            item.loadProduct();
+            item.loadProduct(companyID);
 
             tempArray.add(item);
         }

@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import com.dev.lakik.expresspos.Adapters.InventoryAdapter;
 import com.dev.lakik.expresspos.Adapters.OrdersAdapter;
 import com.dev.lakik.expresspos.Listeners.RecyclerItemClickListener;
+import com.dev.lakik.expresspos.Model.Company;
 import com.dev.lakik.expresspos.Model.Transaction;
 import com.dev.lakik.expresspos.R;
 
@@ -31,7 +32,7 @@ public class OrdersFragment extends Fragment implements RecyclerItemClickListene
     private OrdersAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    ArrayList<Transaction> arr;
+    private ArrayList<Transaction> arr;
 
     public OrdersFragment() {}
 
@@ -77,16 +78,17 @@ public class OrdersFragment extends Fragment implements RecyclerItemClickListene
 
 
         arr = new ArrayList<>();
-        arr.add(new Transaction(new Date(), 10f, 2f, 55f));
-        arr.add(new Transaction(new Date(), 10f, 2f, 55f));
-        arr.add(new Transaction(new Date(), 10f, 2f, 55f));
-        arr.add(new Transaction(new Date(), 10f, 2f, 55f));
-        arr.add(new Transaction(new Date(), 10f, 2f, 55f));
-        arr.add(new Transaction(new Date(), 10f, 2f, 55f));
-        arr.add(new Transaction(new Date(), 10f, 2f, 55f));
-        arr.add(new Transaction(new Date(), 10f, 2f, 55f));
-        arr.add(new Transaction(new Date(), 10f, 2f, 55f));
-        arr.add(new Transaction(new Date(), 10f, 2f, 55f));
+        arr.add(new Transaction(Company.instance.getId(), new Date(), 10f, 2f, 55f));
+        arr.add(new Transaction(Company.instance.getId(), new Date(), 10f, 2f, 55f));
+        arr.add(new Transaction(Company.instance.getId(), new Date(), 10f, 2f, 55f));
+        arr.add(new Transaction(Company.instance.getId(), new Date(), 10f, 2f, 55f));
+        arr.add(new Transaction(Company.instance.getId(), new Date(), 10f, 2f, 55f));
+        arr.add(new Transaction(Company.instance.getId(), new Date(), 10f, 2f, 55f));
+        arr.add(new Transaction(Company.instance.getId(), new Date(), 10f, 2f, 55f));
+        arr.add(new Transaction(Company.instance.getId(), new Date(), 10f, 2f, 55f));
+        arr.add(new Transaction(Company.instance.getId(), new Date(), 10f, 2f, 55f));
+        arr.add(new Transaction(Company.instance.getId(), new Date(), 10f, 2f, 55f));
+
         mAdapter.setData(arr);
     }
 

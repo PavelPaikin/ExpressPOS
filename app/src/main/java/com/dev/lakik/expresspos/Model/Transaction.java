@@ -23,6 +23,7 @@ import java.util.UUID;
 public class Transaction extends TransactionHelper implements Parcelable {
 
     private UUID id;
+    private UUID company_id;
     private Date date;
     private float subTotal;
     private float tax;
@@ -32,8 +33,9 @@ public class Transaction extends TransactionHelper implements Parcelable {
 
     private ArrayList<TransactionProduct> arrTransProducts;
 
-    public Transaction(){
+    public Transaction(String companyID){
         this.id = UUID.randomUUID();
+        this.company_id = UUID.fromString(companyID);
         this.date = new Date();
         this.subTotal = 0;
         this.tax = 0;
@@ -42,8 +44,9 @@ public class Transaction extends TransactionHelper implements Parcelable {
         arrTransProducts = new ArrayList<>();
     }
 
-    public Transaction(Date date, float subTotal, float tax, float total) {
+    public Transaction(String companyID, Date date, float subTotal, float tax, float total) {
         this.id = UUID.randomUUID();
+        this.company_id = UUID.fromString(companyID);
         this.date = date;
         this.subTotal = subTotal;
         this.tax = tax;
@@ -52,8 +55,9 @@ public class Transaction extends TransactionHelper implements Parcelable {
         arrTransProducts = new ArrayList<>();
     }
 
-    public Transaction(String date, float subTotal, float tax, float total) {
+    public Transaction(String companyID, String date, float subTotal, float tax, float total) {
         this.id = UUID.randomUUID();
+        this.company_id = UUID.fromString(companyID);
         try {
             this.date = dateFormat.parse(date);
         } catch (ParseException e) {
@@ -66,8 +70,9 @@ public class Transaction extends TransactionHelper implements Parcelable {
         arrTransProducts = new ArrayList<>();
     }
 
-    public Transaction(UUID id, String date, float subTotal, float tax, float total) {
+    public Transaction(UUID id, String companyID, String date, float subTotal, float tax, float total) {
         this.id = UUID.randomUUID();
+        this.company_id = UUID.fromString(companyID);
         try {
             this.date = dateFormat.parse(date);
         } catch (ParseException e) {
@@ -82,8 +87,8 @@ public class Transaction extends TransactionHelper implements Parcelable {
 
 
 
-    public void loadProducts(){
-        this.arrTransProducts = TransactionProduct.getAllRecordsByID(id.toString());
+    public void loadProducts(String companyID){
+        this.arrTransProducts = TransactionProduct.getAllRecordsByID(id.toString(), companyID);
     }
 
     public void addProduct(Product product){
@@ -117,6 +122,7 @@ public class Transaction extends TransactionHelper implements Parcelable {
         ContentValues cv = new ContentValues();
 
         cv.put(NAME_COLUMN_ID, this.id.toString());
+        cv.put(NAME_COLUMN_ID, this.company_id.toString());
         cv.put(NAME_COLUMN_DATE, dateFormat.format(this.date));
         cv.put(NAME_COLUMN_SUB_TOTAL, this.subTotal);
         cv.put(NAME_COLUMN_TAX, this.tax);
@@ -135,6 +141,7 @@ public class Transaction extends TransactionHelper implements Parcelable {
     public void printObject(){
         StringBuilder sb = new StringBuilder();
         sb.append(id.toString() + ", ");
+        sb.append(company_id.toString() + ", ");
         sb.append(date + ", ");
         sb.append(subTotal + ", ");
         sb.append(tax + ", ");
@@ -145,7 +152,9 @@ public class Transaction extends TransactionHelper implements Parcelable {
     }
 
     public String getId() { return id.toString(); }
-    public void setId(UUID id) { this.id = id; }
+    public void setId(String id) { this.id = UUID.fromString(id); }
+    public String getCompanyId() { return company_id.toString(); }
+    public void setCompanyId(String companyId) { this.company_id = UUID.fromString(companyId); }
     public Date getDate() { return date; }
     public void setDate(Date date) { this.date = date; }
     public void setDate(String date) {
@@ -168,6 +177,7 @@ public class Transaction extends TransactionHelper implements Parcelable {
 
     protected Transaction(Parcel in) {
         id = UUID.fromString(in.readString());
+        company_id = UUID.fromString(in.readString());
         try {
             date = dateFormat.parse(in.readString());
         } catch (ParseException e) {
@@ -182,6 +192,7 @@ public class Transaction extends TransactionHelper implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id.toString());
+        dest.writeString(company_id.toString());
         dest.writeString(dateFormat.format(this.date));
         dest.writeFloat(subTotal);
         dest.writeFloat(tax);

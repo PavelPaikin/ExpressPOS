@@ -32,6 +32,7 @@ import android.widget.TextView;
 import com.dev.lakik.expresspos.Database.DBHelper;
 import com.dev.lakik.expresspos.Database.ModelHelpers.ProductHelper;
 import com.dev.lakik.expresspos.MainActivity;
+import com.dev.lakik.expresspos.Model.Company;
 import com.dev.lakik.expresspos.Model.Const;
 import com.dev.lakik.expresspos.Model.Inventory;
 import com.dev.lakik.expresspos.Model.Product;
@@ -116,7 +117,7 @@ public class POSFragment extends Fragment {
         taxNumTV = (TextView) view.findViewById(R.id.pos_taxNumTV);
         totalNumTV = (TextView) view.findViewById(R.id.pos_totalNumTV);
 
-        inventoryArray = Inventory.getAllRecords();//Populate the inventory array from the database
+        inventoryArray = Inventory.getAllRecords(Company.instance.getId());//Populate the inventory array from the database
 
         //RecyclerView for the product CardView
         rv = (RecyclerView) view.findViewById(R.id.pos_recyclerView);
@@ -149,7 +150,7 @@ public class POSFragment extends Fragment {
                     final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
                     final AlertDialog alertDialog = alertDialogBuilder.create();
                     inventoryArray.clear();
-                    inventoryArray = Inventory.getAllRecords();//Populate the inventory array from the database
+                    inventoryArray = Inventory.getAllRecords(Company.instance.getId());//Populate the inventory array from the database
                     alertDialog.setTitle("Add Product");
                     final LVAdapter lvAdapter = new LVAdapter(getContext(), inventoryArray);
                     View newView = LayoutInflater.from(getContext()).inflate(R.layout.pos_addlist, container, false);
@@ -190,11 +191,11 @@ public class POSFragment extends Fragment {
                 tTax = (float) round(subtotal * tax, 2);
                 tTotal = (float) round(subtotal * (1 + tax), 2);
 
-                Transaction newTrans = new Transaction("Today", tSub, tTax, tTotal);
+                Transaction newTrans = new Transaction(Company.instance.getId(), "Today", tSub, tTax, tTotal);
                 newTrans.save();
 
                 for (Product item : prodArray) {
-                    TransactionProduct transProduct = new TransactionProduct(newTrans.getId(), item.getId(), (float) item.getPrice(), 1);
+                    TransactionProduct transProduct = new TransactionProduct(newTrans.getId(), Company.instance.getId(), item.getId(), (float) item.getPrice(), 1);
                     transProduct.save();
                     transactionProdArray.add(transProduct);
                 }

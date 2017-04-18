@@ -37,6 +37,7 @@ public class CreditsAdapter extends RecyclerView.Adapter<CreditsAdapter.ViewHold
         mDataset.add(new Credit(Credit.Source.GITHUB, "Picasso", "A powerful image downloading and caching library for Android", "https://github.com/square/picasso"));
         mDataset.add(new Credit(Credit.Source.GITHUB, "Crop images", "An Android library project that provides a simple image cropping Activity, based on code from AOSP.", "https://github.com/jdamcd/android-crop"));
         mDataset.add(new Credit(Credit.Source.GITHUB, "PageIndicatorView", "PageIndicatorView will simplify your life while you working with Android ViewPager and need to indicate selected page. It's easy to setup and customize as you need with run-time preview rendering.", "https://github.com/romandanylyk/PageIndicatorView"));
+        mDataset.add(new Credit(Credit.Source.GITHUB, "CircleImageView", "A fast circular ImageView perfect for profile images. This is based on RoundedImageView from Vince Mi which itself is based on techniques recommended by Romain Guy.", "https://github.com/hdodenhof/CircleImageView"));
     }
 
     @Override
