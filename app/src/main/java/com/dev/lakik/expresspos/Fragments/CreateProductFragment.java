@@ -27,6 +27,7 @@ import android.widget.ImageButton;
 
 import com.dev.lakik.expresspos.Adapters.ProductImagesAdapter;
 import com.dev.lakik.expresspos.Helpers.InputValidationHelper;
+import com.dev.lakik.expresspos.Model.Company;
 import com.dev.lakik.expresspos.Model.Const;
 import com.dev.lakik.expresspos.Model.Inventory;
 import com.dev.lakik.expresspos.Model.Product;
@@ -111,7 +112,7 @@ public class CreateProductFragment extends Fragment {
         }
 
         if(inventory == null){
-            inventory = new Inventory();
+            inventory = new Inventory(Company.instance.getId());
         }else{
             if(inventory.getProduct().hasImages()) inventory.getProduct().loadImages();
         }

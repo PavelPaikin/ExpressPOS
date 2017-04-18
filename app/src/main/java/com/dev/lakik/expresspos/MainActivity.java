@@ -3,16 +3,10 @@ package com.dev.lakik.expresspos;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -21,13 +15,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.dev.lakik.expresspos.Fragments.CreditsFragment;
-import com.dev.lakik.expresspos.Fragments.LoginFragment;
 import com.dev.lakik.expresspos.Fragments.POSSummaryFragment;
-import com.dev.lakik.expresspos.Fragments.RegisterFragment;
 import com.dev.lakik.expresspos.Fragments.SettingsFragment;
-import com.dev.lakik.expresspos.Fragments.SplashFragment;
 
 import com.dev.lakik.expresspos.CustomView.ControllableAppBarLayout;
 import com.dev.lakik.expresspos.Database.DBHelper;
@@ -40,16 +33,13 @@ import com.dev.lakik.expresspos.Model.Company;
 import com.dev.lakik.expresspos.Model.Const;
 import com.dev.lakik.expresspos.Model.Inventory;
 import com.dev.lakik.expresspos.Model.Product;
-import com.dev.lakik.expresspos.Model.ProductImage;
 import com.dev.lakik.expresspos.Model.Transaction;
-import com.soundcloud.android.crop.Crop;
+import com.squareup.picasso.Picasso;
 
-import com.github.clans.fab.FloatingActionButton;
-import com.github.clans.fab.FloatingActionMenu;
-import java.util.ArrayList;
-import java.util.UUID;
+import java.io.File;
+import java.util.Date;
 
-import static java.lang.System.in;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -64,6 +54,11 @@ public class MainActivity extends AppCompatActivity
     ControllableAppBarLayout appBarLayout = null;
     Fragment currentFragment;
     Toolbar toolbar;
+
+    Company company;
+
+    CircleImageView imgCompanyPic;
+    TextView tvCompanyName, tvCompanyEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +85,33 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        changeFragment(POSFragment.newInstance(), false);
+        getSupportFragmentManager().beginTransaction().replace(R.id.mainContainer, POSFragment.newInstance()).commit();
+
+        company = new Company();
+        company.loadFromDevice(this);
+
+        View hView =  navigationView.getHeaderView(0);
+        imgCompanyPic = (CircleImageView)hView.findViewById(R.id.imgCompanyPic);
+        tvCompanyName = (TextView)hView.findViewById(R.id.tvCompanyName);
+        tvCompanyEmail = (TextView)hView.findViewById(R.id.tvCompanyEmail);
+
+        Transaction transaction = new Transaction(Company.instance.getId(), new Date(), 0f, 0f, 0f);
+        transaction.save();
+
+        Transaction.getAllRecords(Company.instance.getId());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if((company.getImagePath()!= null)&&(!company.getImagePath().equals(""))){
+            Picasso.with(this).load(new File(company.getImagePath())).resize(200, 200).centerInside().into(imgCompanyPic);
+        }
+
+        tvCompanyName.setText(company.getName());
+        tvCompanyEmail.setText(company.getEmail());
+
     }
 
     @Override
@@ -161,6 +182,9 @@ public class MainActivity extends AppCompatActivity
                 appBarLayout.collapseToolbar();
                 break;
             case R.id.nav_logout:
+                company.removeAutoLogin();
+                company.saveOnDevice(this);
+
                 Intent intent = new Intent(this, SplashActivity.class);
                 startActivity(intent);
                 finish();
@@ -229,11 +253,11 @@ public class MainActivity extends AppCompatActivity
     public void scanCompleted(String parent, String barcode) {
 
         if(parent == InventoryFragment.class.getName()){
-            Inventory item = Inventory.get(barcode);
+            Inventory item = Inventory.get(barcode, company.getId());
 
             if(item == null){
-                item = new Inventory();
-                Product p = new Product();
+                item = new Inventory(Company.instance.getId());
+                Product p = new Product(Company.instance.getId());
                 p.setUpc(barcode);
 
                 item.setProduct(p);
@@ -255,7 +279,7 @@ public class MainActivity extends AppCompatActivity
 
             //((CreateProductFragment)currentFragment).setUPC(barcode);
 
-            Inventory item = Inventory.get(barcode);
+            Inventory item = Inventory.get(barcode, company.getId());
 
             if(item == null){
 
@@ -277,7 +301,7 @@ public class MainActivity extends AppCompatActivity
             currentFragment = getPOSFragment();
             getSupportFragmentManager().popBackStack();
 
-            Inventory inv = Inventory.get(barcode);
+            Inventory inv = Inventory.get(barcode, company.getId());
             ((POSFragment)currentFragment).addProduct(inv.getProduct());
         }
     }

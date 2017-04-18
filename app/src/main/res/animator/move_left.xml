@@ -3,7 +3,7 @@
 
     <objectAnimator
         android:propertyName="x"
-        android:duration="1500"
+        android:duration="1000"
         android:valueTo="350" />
 
 </set>

@@ -23,6 +23,9 @@ public class ProductHelper {
     public static String NAME_COLUMN_ID = "id";
     public static String TYPE_COLUMN_ID = "text";
 
+    public static String NAME_COLUMN_COMPANY_ID = "company_id";
+    public static String TYPE_COLUMN_COMPANY_ID = "text";
+
     public static String NAME_COLUMN_NAME = "name";
     public static String TYPE_COLUMN_NAME = "text";
 
@@ -48,6 +51,7 @@ public class ProductHelper {
         sb.append(TABLE_NAME);
         sb.append(" (");
         sb.append(NAME_COLUMN_ID + " " + TYPE_COLUMN_ID + " primary key, ");
+        sb.append(NAME_COLUMN_COMPANY_ID + " " + TYPE_COLUMN_COMPANY_ID + ", ");
         sb.append(NAME_COLUMN_NAME + " " + TYPE_COLUMN_NAME + ", ");
         sb.append(NAME_COLUMN_NUMBER + " " + TYPE_COLUMN_NUMBER + ", ");
         sb.append(NAME_COLUMN_UPC + " " + TYPE_COLUMN_UPC + ", ");
@@ -65,14 +69,15 @@ public class ProductHelper {
     }
 
     //Get all items and return Array list with all items
-    public static ArrayList<Product> getAllRecords(){
+    public static ArrayList<Product> getAllRecords(String companyID){
         SQLiteDatabase db = DBHelper.Instance().getDB();
 
         ArrayList<Product> tempArray = new ArrayList<>();
-        Cursor c = db.query(TABLE_NAME, null, null, null, null, null, NAME_COLUMN_ID + " DESC");
+        Cursor c = db.rawQuery("Select * from " + TABLE_NAME + " where " + NAME_COLUMN_COMPANY_ID + "= '" + companyID + "'", null);
         while(c.moveToNext()){
-            Product item = new Product();
-            item.setId(UUID.fromString(c.getString(c.getColumnIndex(NAME_COLUMN_ID))));
+            Product item = new Product(companyID);
+            item.setId(c.getString(c.getColumnIndex(NAME_COLUMN_ID)));
+            item.setCompanyId(c.getString(c.getColumnIndex(NAME_COLUMN_COMPANY_ID)));
             item.setName(c.getString(c.getColumnIndex(NAME_COLUMN_NAME)));
             item.setNumber(c.getString(c.getColumnIndex(NAME_COLUMN_NUMBER)));
             item.setUpc(c.getString(c.getColumnIndex(NAME_COLUMN_UPC)));
@@ -87,13 +92,14 @@ public class ProductHelper {
     }
 
     //Get item by id
-    public static Product get(String id){
+    public static Product get(String id, String companyID){
         SQLiteDatabase db = DBHelper.Instance().getDB();
-        Cursor c = db.rawQuery("Select * from " + TABLE_NAME + " where " + NAME_COLUMN_ID + "= '" + id + "'", null);
+        Cursor c = db.rawQuery("Select * from " + TABLE_NAME + " where " + NAME_COLUMN_ID + "= '" + id + "' AND " + NAME_COLUMN_COMPANY_ID + "= '" + companyID + "'", null);
         if(c!=null) c.moveToFirst();
 
-        Product item = new Product();
-        item.setId(UUID.fromString(c.getString(c.getColumnIndex(NAME_COLUMN_ID))));
+        Product item = new Product(companyID);
+        item.setId(c.getString(c.getColumnIndex(NAME_COLUMN_ID)));
+        item.setCompanyId(c.getString(c.getColumnIndex(NAME_COLUMN_COMPANY_ID)));
         item.setName(c.getString(c.getColumnIndex(NAME_COLUMN_NAME)));
         item.setNumber(c.getString(c.getColumnIndex(NAME_COLUMN_NUMBER)));
         item.setUpc(c.getString(c.getColumnIndex(NAME_COLUMN_UPC)));

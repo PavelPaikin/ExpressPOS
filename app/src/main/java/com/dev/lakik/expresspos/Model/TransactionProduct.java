@@ -37,19 +37,19 @@ public class TransactionProduct extends TransactionProductHelper implements Parc
     }
 
 
-    public TransactionProduct(String transactionId, String productId, float price, int amount) {
+    public TransactionProduct(String transactionId, String comapnyID, String productId, float price, int amount) {
         this.transactionId = UUID.fromString(transactionId);
         this.productId = UUID.fromString(productId);
         this.price = price;
         this.amount = amount;
 
-        this.product = Product.get(productId.toString());
+        this.product = Product.get(productId.toString(), comapnyID);
     }
 
 
 
-    public void loadProduct(){
-        this.product = Product.get(productId.toString());
+    public void loadProduct(String companyId){
+        this.product = Product.get(productId.toString(), companyId);
     }
 
     //Save current item to database if exists updates record

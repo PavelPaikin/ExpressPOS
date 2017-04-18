@@ -3,7 +3,7 @@
     <set android:ordering="sequentially">
         <objectAnimator
             android:propertyName="y"
-            android:duration="1500"
-            android:valueTo="75" />
+            android:duration="1000"
+            android:valueTo="100" />
     </set>
 </set>

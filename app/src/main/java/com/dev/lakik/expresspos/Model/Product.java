@@ -20,6 +20,7 @@ import java.util.UUID;
 public class Product extends ProductHelper implements Parcelable {
 
     private UUID id;
+    private UUID company_id;
     private String name;
     private String number;
     private String upc;
@@ -28,13 +29,15 @@ public class Product extends ProductHelper implements Parcelable {
 
     private ArrayList<ProductImage> imageArray;
 
-    public Product(){
+    public Product(String companyId){
         this.id = UUID.randomUUID();
+        this.company_id = UUID.fromString(companyId);
         this.imageArray = new ArrayList<>();
     }
 
-    public Product(String name, String number, String upc, String description, double price) {
+    public Product(String companyID, String name, String number, String upc, String description, double price) {
         this.id = UUID.randomUUID();
+        this.company_id = UUID.fromString(companyID);
         this.name = name;
         this.number = number;
         this.upc = upc;
@@ -44,8 +47,9 @@ public class Product extends ProductHelper implements Parcelable {
         this.imageArray = new ArrayList<>();
     }
 
-    public Product(String id, String name, String number, String upc, String description, double price) {
+    public Product(String id, String companyID, String name, String number, String upc, String description, double price) {
         this.id = UUID.fromString(id);
+        this.company_id = UUID.fromString(companyID);
         this.name = name;
         this.number = number;
         this.upc = upc;
@@ -77,6 +81,7 @@ public class Product extends ProductHelper implements Parcelable {
         ContentValues cv = new ContentValues();
         
         cv.put(NAME_COLUMN_ID, this.id.toString());
+        cv.put(NAME_COLUMN_DESCRIPTION, this.company_id.toString());
         cv.put(NAME_COLUMN_NAME, this.name);
         cv.put(NAME_COLUMN_NUMBER, this.number);
         cv.put(NAME_COLUMN_UPC, this.upc);
@@ -114,6 +119,7 @@ public class Product extends ProductHelper implements Parcelable {
     public void printObject(){
         StringBuilder sb = new StringBuilder();
         sb.append(id.toString() + ", ");
+        sb.append(company_id.toString() + ", ");
         sb.append(name + ", ");
         sb.append(number + ", ");
         sb.append(upc + ", ");
@@ -128,7 +134,9 @@ public class Product extends ProductHelper implements Parcelable {
     }
 
     public String getId() { return id.toString(); }
-    public void setId(UUID id) { this.id = id; }
+    public void setId(String id) { this.id = UUID.fromString(id); }
+    public String getCompanyId() { return company_id.toString(); }
+    public void setCompanyId(String companyId) { this.company_id = UUID.fromString(companyId); }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     public String getNumber() { return number; }
@@ -144,6 +152,7 @@ public class Product extends ProductHelper implements Parcelable {
 
     protected Product(Parcel in) {
         id = UUID.fromString(in.readString());
+        company_id = UUID.fromString(in.readString());
         name = in.readString();
         number = in.readString();
         upc = in.readString();
@@ -156,6 +165,7 @@ public class Product extends ProductHelper implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id.toString());
+        dest.writeString(company_id.toString());
         dest.writeString(name);
         dest.writeString(number);
         dest.writeString(upc);
@@ -181,3 +191,4 @@ public class Product extends ProductHelper implements Parcelable {
     };
 
 }
+

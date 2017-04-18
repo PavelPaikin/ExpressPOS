@@ -20,44 +20,49 @@ public class Inventory extends InventoryHelper implements Parcelable {
 
     private UUID id;
     private UUID product_id;
+    private UUID company_id;
     private int amount;
 
     private Product product;
 
-    public Inventory(){
+    public Inventory(String companyId){
         this.id = UUID.randomUUID();
-        this.product = new Product();
+        this.company_id = UUID.fromString(companyId);
+        this.product = new Product(companyId);
         this.product_id = UUID.fromString(product.getId());
     }
 
-    public Inventory(Product product, int amount) {
+    public Inventory(String companyId, Product product, int amount) {
         this.id = UUID.randomUUID();
+        this.company_id = UUID.fromString(companyId);
         this.product_id = UUID.fromString(product.getId());
         this.amount = amount;
 
         this.product = product;
     }
 
-    public Inventory(UUID product_id, int amount) {
+    public Inventory(String companyId, String product_id, int amount) {
         this.id = UUID.randomUUID();
-        this.product_id = product_id;
+        this.company_id = UUID.fromString(companyId);
+        this.product_id = UUID.fromString(product_id);;
         this.amount = amount;
 
-        this.product = Product.get(product_id.toString());
+        this.product = Product.get(product_id.toString(), companyId);
     }
 
-    public Inventory(UUID id, UUID product_id, int amount) {
-        this.id = id;
-        this.product_id = product_id;
+    public Inventory(String id, String companyId, String product_id, int amount) {
+        this.id = UUID.fromString(id);
+        this.company_id = UUID.fromString(companyId);
+        this.product_id = UUID.fromString(product_id);
         this.amount = amount;
 
-        this.product = Product.get(product_id.toString());
+        this.product = Product.get(product_id.toString(), companyId);
     }
 
 
 
     public void loadProduct(){
-        this.product = Product.get(product_id.toString());
+        this.product = Product.get(product_id.toString(), company_id.toString());
     }
 
     //Save current item to database if exists updates record
@@ -66,6 +71,7 @@ public class Inventory extends InventoryHelper implements Parcelable {
         ContentValues cv = new ContentValues();
 
         cv.put(NAME_COLUMN_ID, this.id.toString());
+        cv.put(NAME_COLUMN_COMPANY_ID, this.company_id.toString());
         cv.put(NAME_COLUMN_PRODUCT_ID, this.product_id.toString());
         cv.put(NAME_COLUMN_AMOUNT, this.amount);
 
@@ -87,6 +93,7 @@ public class Inventory extends InventoryHelper implements Parcelable {
     public void printObject(){
         StringBuilder sb = new StringBuilder();
         sb.append(id.toString() + ", ");
+        sb.append(company_id.toString() + ", ");
         sb.append(product_id.toString() + ", ");
         sb.append(amount + "");
 
@@ -99,6 +106,8 @@ public class Inventory extends InventoryHelper implements Parcelable {
     public void setId(UUID id) { this.id = id; }
     public String getProduct_id() { return product_id.toString(); }
     public void setProduct_id(UUID product_id) { this.product_id = product_id; }
+    public String getCompany_id() { return company_id.toString(); }
+    public void setCompany_id(UUID company_id) { this.company_id = company_id; }
     public int getAmount() { return amount; }
     public void setAmount(int amount) { this.amount = amount; }
     public Product getProduct() { return product; }
@@ -110,6 +119,7 @@ public class Inventory extends InventoryHelper implements Parcelable {
     protected Inventory(Parcel in) {
         id = UUID.fromString(in.readString());
         product_id = UUID.fromString(in.readString());
+        company_id = UUID.fromString(in.readString());
         amount = in.readInt();
         product = in.readParcelable(Product.class.getClassLoader());
     }
@@ -118,6 +128,7 @@ public class Inventory extends InventoryHelper implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id.toString());
         dest.writeString(product_id.toString());
+        dest.writeString(company_id.toString());
         dest.writeInt(amount);
         dest.writeParcelable(product, flags);
     }
