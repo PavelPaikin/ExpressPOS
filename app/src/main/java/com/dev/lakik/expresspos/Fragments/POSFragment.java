@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dev.lakik.expresspos.Database.DBHelper;
 import com.dev.lakik.expresspos.Database.ModelHelpers.ProductHelper;
@@ -79,6 +80,8 @@ public class POSFragment extends Fragment {
         if (getArguments() != null) {
 
         }
+
+        thisTrans = new Transaction(Company.instance.getId());
     }
 
     /*
@@ -98,23 +101,27 @@ public class POSFragment extends Fragment {
     public static Transaction thisTrans;
 
     double subtotal;
+    RVAdapter adapter;
+
+
 
     @Override
-    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         // Inflate the layout for this fragment
-        final View view = inflater.inflate(R.layout.fragment_pos, container, false);
+        View view = inflater.inflate(R.layout.fragment_pos, container, false);
 
         totalNumTV = (TextView) view.findViewById(R.id.pos_totalNumTV);
 
         inventoryArray = Inventory.getAllRecords(Company.instance.getId());//Populate the inventory array from the database
-        thisTrans = new Transaction(Company.instance.getId());
+
 
         //RecyclerView for the product CardView
         rv = (RecyclerView) view.findViewById(R.id.pos_recyclerView);
         rv.setNestedScrollingEnabled(false);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
-        final RVAdapter adapter = new RVAdapter(thisTrans.getProducts());
+        adapter = new RVAdapter(thisTrans.getProducts());
         rv.setAdapter(adapter);
         calculateTotal();
 
@@ -144,7 +151,7 @@ public class POSFragment extends Fragment {
                     inventoryArray = Inventory.getAllRecords(Company.instance.getId());//Populate the inventory array from the database
                     alertDialog.setTitle("Add Product");
                     final LVAdapter lvAdapter = new LVAdapter(getContext(), inventoryArray);
-                    View newView = LayoutInflater.from(getContext()).inflate(R.layout.pos_addlist, container, false);
+                    View newView = LayoutInflater.from(getContext()).inflate(R.layout.pos_addlist, null, false);
                     listView = (ListView) newView.findViewById(R.id.pos_addListView);
                     listView.setAdapter(lvAdapter);
                     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -152,7 +159,9 @@ public class POSFragment extends Fragment {
                         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                             Product newProduct = inventoryArray.get(i).getProduct();
 //                            prodArray.add(newProduct);
-                            thisTrans.addProduct(newProduct);
+                            if(!thisTrans.addProduct(newProduct)){
+                                Toast.makeText(getContext(), "No enough product in inventory", Toast.LENGTH_SHORT).show();
+                            }
                             //prodArray.add(newProduct);
                             //prodArray = thisTrans.getProducts();
                             alertDialog.cancel();
@@ -184,7 +193,6 @@ public class POSFragment extends Fragment {
                 tSub = (float) subtotal;
                 tTax = (float) round(subtotal * tax, 2);
                 tTotal = (float) round(subtotal * (1 + tax), 2);
-
 
                 thisTrans.setSubTotal(tSub);
                 thisTrans.setTax(tTax);
@@ -227,7 +235,9 @@ public class POSFragment extends Fragment {
 
     public void addProduct(Product product){
         //prodArray.add(product);
-        thisTrans.addProduct(product);
+        if(!thisTrans.addProduct(product)){
+            Toast.makeText(getContext(), "No enough product in inventory", Toast.LENGTH_SHORT).show();
+        }
         calculateTotal();
         famPOS.close(true);
     }
@@ -241,6 +251,41 @@ public class POSFragment extends Fragment {
         BigDecimal bd = new BigDecimal(value);
         bd = bd.setScale(places, RoundingMode.HALF_UP);
         return bd.doubleValue();
+    }
+
+    //Submit button menu
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.create_product_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_submit) {
+            if(thisTrans.getProducts().size()>0) {
+                calculateTotal();
+
+                float tSub, tTax, tTotal;
+                tSub = (float) subtotal;
+                tTax = (float) round(subtotal * tax, 2);
+                tTotal = (float) round(subtotal * (1 + tax), 2);
+
+
+                thisTrans.setSubTotal(tSub);
+                thisTrans.setTax(tTax);
+                thisTrans.setTotal(tTotal);
+                mListener.onFragmentInteraction(Uri.parse(Const.PAYMENT_FRAGMENT_FROM_POS));
+            }else{
+                Toast.makeText(getContext(), "No Items Selected", Toast.LENGTH_SHORT).show();
+            }
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private class LVAdapter extends ArrayAdapter<Inventory> {
@@ -391,6 +436,10 @@ public class POSFragment extends Fragment {
         @Override
         public void onAttachedToRecyclerView(RecyclerView recyclerView) {
             super.onAttachedToRecyclerView(recyclerView);
+        }
+
+        public TransactionProduct getProduct(int position){
+            return products.get(position);
         }
 
     }

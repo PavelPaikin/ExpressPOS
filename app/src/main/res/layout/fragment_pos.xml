@@ -14,8 +14,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Submit"
-        tools:layout_editor_absoluteY="0dp"
-        tools:layout_editor_absoluteX="0dp" />
+        android:visibility="gone"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/pos_recyclerView"
@@ -122,7 +123,7 @@
             android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
             android:text="Total (with tax):"
-            android:textColor="@color/colorPrimaryText"
+            android:textColor="@color/color_text_icon"
             android:textSize="24sp"
             android:textStyle="bold"
             fab:layout_constraintBottom_toBottomOf="parent"
@@ -139,8 +140,9 @@
             android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
             android:text="$3.99"
-            android:textColor="@color/colorPrimaryText"
+            android:textColor="@color/color_text_icon"
             android:textSize="24sp"
+            android:textStyle="bold"
             fab:layout_constraintBottom_toBottomOf="@+id/pos_totalTV"
             fab:layout_constraintRight_toRightOf="parent"
             fab:layout_constraintTop_toTopOf="@+id/pos_totalTV" />

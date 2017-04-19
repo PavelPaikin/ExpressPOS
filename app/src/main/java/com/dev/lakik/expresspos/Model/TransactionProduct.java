@@ -7,6 +7,7 @@ import android.os.Parcelable;
 import android.util.Log;
 
 import com.dev.lakik.expresspos.Database.DBHelper;
+import com.dev.lakik.expresspos.Database.ModelHelpers.InventoryHelper;
 import com.dev.lakik.expresspos.Database.ModelHelpers.TransactionHelper;
 import com.dev.lakik.expresspos.Database.ModelHelpers.TransactionProductHelper;
 
@@ -24,16 +25,18 @@ public class TransactionProduct extends TransactionProductHelper implements Parc
     private int amount;
 
     private Product product;
+    private Inventory inventory;
 
     public TransactionProduct(){}
 
-    public TransactionProduct(Product product){
-        this.transactionId = UUID.randomUUID();
+    public TransactionProduct(String transactionId, Product product){
+        this.transactionId = UUID.fromString(transactionId);
         this.productId = UUID.fromString(product.getId());
         this.price = product.getPrice();
         this.amount = 1;
 
         this.product = product;
+        this.inventory = InventoryHelper.get(product.getUpc(), product.getCompanyId());
     }
 
 
@@ -44,12 +47,14 @@ public class TransactionProduct extends TransactionProductHelper implements Parc
         this.amount = amount;
 
         this.product = Product.get(productId.toString(), comapnyID);
+        this.inventory = InventoryHelper.get(product.getUpc(), product.getCompanyId());
     }
 
 
 
     public void loadProduct(String companyId){
         this.product = Product.get(productId.toString(), companyId);
+        this.inventory = InventoryHelper.get(product.getUpc(), product.getCompanyId());
     }
 
     //Save current item to database if exists updates record
@@ -66,8 +71,13 @@ public class TransactionProduct extends TransactionProductHelper implements Parc
         Log.d("DBHelper", "inserted id: " + id);
     }
 
-    public void addAmount(){
-        this.amount++;
+    public boolean addAmount(){
+        if(this.amount<inventory.getAmount()) {
+            this.amount++;
+            return true;
+        }else{
+            return false;
+        }
     }
 
     public void addAmount(int amount) {
@@ -80,6 +90,12 @@ public class TransactionProduct extends TransactionProductHelper implements Parc
 
     public void removeAmount(int amount) {
         this.amount -= amount;
+    }
+
+    public void removeFromInventory(){
+        int newInventoryAmount = inventory.getAmount() - amount;
+        inventory.setAmount(newInventoryAmount);
+        inventory.save();
     }
 
     //delete curent item from table
@@ -107,7 +123,18 @@ public class TransactionProduct extends TransactionProductHelper implements Parc
     public double getPrice() { return price; }
     public void setPrice(double price) { this.price = price; }
     public int getAmount() { return amount; }
-    public void setAmount(int amount) { this.amount = amount; }
+    public boolean setAmount(int amount) {
+        if(amount<=inventory.getAmount()) {
+            this.amount = amount;
+            return true;
+        }else{
+            this.amount = getMaxAmount();
+            return false;
+        }
+    }
+    public int getMaxAmount(){
+        return inventory.getAmount();
+    }
     public Product getProduct(){return product;}
 
     protected TransactionProduct(Parcel in) {
@@ -116,6 +143,7 @@ public class TransactionProduct extends TransactionProductHelper implements Parc
         price = in.readDouble();
         amount = in.readInt();
         product = in.readParcelable(Product.class.getClassLoader());
+        inventory = in.readParcelable(Inventory.class.getClassLoader());
     }
 
     @Override
@@ -125,6 +153,7 @@ public class TransactionProduct extends TransactionProductHelper implements Parc
         dest.writeDouble(price);
         dest.writeInt(amount);
         dest.writeParcelable(product, flags);
+        dest.writeParcelable(inventory, flags);
     }
 
     @Override

@@ -73,7 +73,9 @@ public class ProductHelper {
         SQLiteDatabase db = DBHelper.Instance().getDB();
 
         ArrayList<Product> tempArray = new ArrayList<>();
-        Cursor c = db.rawQuery("Select * from " + TABLE_NAME + " where " + NAME_COLUMN_COMPANY_ID + "= '" + companyID + "'", null);
+        //Cursor c = db.rawQuery("Select * from " + TABLE_NAME + " where " + NAME_COLUMN_COMPANY_ID + "= '" + companyID + "'", null);
+        Cursor c = db.rawQuery("Select * from " + TABLE_NAME, null);
+        logCursor(c);
         while(c.moveToNext()){
             Product item = new Product(companyID);
             item.setId(c.getString(c.getColumnIndex(NAME_COLUMN_ID)));
@@ -94,21 +96,27 @@ public class ProductHelper {
     //Get item by id
     public static Product get(String id, String companyID){
         SQLiteDatabase db = DBHelper.Instance().getDB();
+        getAllRecords(companyID);
+
+        Log.d("sadas", "companyID: " + companyID + " Product ID: " + id);
         Cursor c = db.rawQuery("Select * from " + TABLE_NAME + " where " + NAME_COLUMN_ID + "= '" + id + "' AND " + NAME_COLUMN_COMPANY_ID + "= '" + companyID + "'", null);
-        if(c!=null) c.moveToFirst();
+        Product item = null;
+        if(c.getCount() != 0) {
+            c.moveToFirst();
 
-        Product item = new Product(companyID);
-        item.setId(c.getString(c.getColumnIndex(NAME_COLUMN_ID)));
-        item.setCompanyId(c.getString(c.getColumnIndex(NAME_COLUMN_COMPANY_ID)));
-        item.setName(c.getString(c.getColumnIndex(NAME_COLUMN_NAME)));
-        item.setNumber(c.getString(c.getColumnIndex(NAME_COLUMN_NUMBER)));
-        item.setUpc(c.getString(c.getColumnIndex(NAME_COLUMN_UPC)));
-        item.setDescription(c.getString(c.getColumnIndex(NAME_COLUMN_DESCRIPTION)));
-        item.setPrice(c.getDouble(c.getColumnIndex(NAME_COLUMN_PRICE)));
+            item = new Product(companyID);
+            item.setId(c.getString(c.getColumnIndex(NAME_COLUMN_ID)));
+            item.setCompanyId(c.getString(c.getColumnIndex(NAME_COLUMN_COMPANY_ID)));
+            item.setName(c.getString(c.getColumnIndex(NAME_COLUMN_NAME)));
+            item.setNumber(c.getString(c.getColumnIndex(NAME_COLUMN_NUMBER)));
+            item.setUpc(c.getString(c.getColumnIndex(NAME_COLUMN_UPC)));
+            item.setDescription(c.getString(c.getColumnIndex(NAME_COLUMN_DESCRIPTION)));
+            item.setPrice(c.getDouble(c.getColumnIndex(NAME_COLUMN_PRICE)));
 
-        item.loadImages();
+            item.loadImages();
 
-        c.close();
+            c.close();
+        }
         return item;
     }
 

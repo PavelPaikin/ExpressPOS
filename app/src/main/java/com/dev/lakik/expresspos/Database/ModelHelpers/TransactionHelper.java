@@ -70,7 +70,7 @@ public class TransactionHelper {
         SQLiteDatabase db = DBHelper.Instance().getDB();
 
         ArrayList<Transaction> tempArray = new ArrayList<>();
-        Cursor c = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE " + NAME_COLUMN_COMPANY_ID + " = '" + comapanyID + "'", null);
+        Cursor c = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE " + NAME_COLUMN_COMPANY_ID + " = '" + comapanyID + "' ORDER BY date DESC", null);
 
         while(c.moveToNext()){
             Transaction item = new Transaction(c.getString(c.getColumnIndex(NAME_COLUMN_COMPANY_ID)));
@@ -82,6 +82,7 @@ public class TransactionHelper {
 
             item.loadProducts(comapanyID);
 
+            item.printObject();
             tempArray.add(item);
         }
         c.close();
