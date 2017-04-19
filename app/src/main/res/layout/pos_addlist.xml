@@ -3,4 +3,8 @@
     android:id="@+id/pos_addListView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginBottom="10dp"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:layout_marginTop="10dp"
     android:orientation="horizontal"></ListView>

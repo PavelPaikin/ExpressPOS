@@ -12,7 +12,9 @@ import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
 import android.text.Layout;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -125,7 +127,7 @@ public class POSFragment extends Fragment {
         rv = (RecyclerView) view.findViewById(R.id.pos_recyclerView);
         rv.setNestedScrollingEnabled(false);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
-        final RVAdapter adapter = new RVAdapter(prodArray);
+        final RVAdapter adapter = new RVAdapter(thisTrans.getProducts());
         rv.setAdapter(adapter);
         calculateTotal();
 
@@ -199,9 +201,6 @@ public class POSFragment extends Fragment {
                 thisTrans.setSubTotal(tSub);
                 thisTrans.setTax(tTax);
                 thisTrans.setTotal(tTotal);
-                //thisTrans.save();
-                //System.out.println("Product Count: " + thisTrans.getProductsCount());
-
                 mListener.onFragmentInteraction(Uri.parse(Const.PAYMENT_FRAGMENT_FROM_POS));
 
             }
@@ -227,16 +226,11 @@ public class POSFragment extends Fragment {
 
     private void calculateTotal() {
         subtotal = 0;
-        for (Product product : prodArray) {
-            subtotal += product.getPrice();
+        for (TransactionProduct product : thisTrans.getProducts()) {
+            subtotal += product.getPrice() * product.getAmount();
         }
 
         String total;
-        //total = "$" + round(subtotal, 2);
-        //subtotalNumTV.setText(total);
-
-        //total = "$" + round(subtotal * tax, 2);
-        //taxNumTV.setText(total);
 
         total = "$" + round(subtotal * (1 + tax), 2);
         totalNumTV.setText(total);
@@ -290,9 +284,9 @@ public class POSFragment extends Fragment {
 
     private class RVAdapter extends RecyclerView.Adapter<RVAdapter.ProductViewHolder> {
 
-        ArrayList<Product> products;
+        ArrayList<TransactionProduct> products;
 
-        RVAdapter(ArrayList<Product> products) {
+        RVAdapter(ArrayList<TransactionProduct> products) {
             this.products = products;
         }
 
@@ -330,16 +324,79 @@ public class POSFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(ProductViewHolder pvh, int i) {
-            pvh.prodName.setText(products.get(i).getName());
-            pvh.prodUPC.setText(products.get(i).getUpc());
+            final int position = i;
+            final ProductViewHolder pvhFinal = pvh;
+            //Set TextViews
+            pvh.prodName.setText(products.get(i).getProduct().getName());
+            pvh.prodUPC.setText(products.get(i).getProduct().getUpc());
             String priceStr = "$" + products.get(i).getPrice();
             pvh.prodPrice.setText(priceStr);
-            pvh.countET.setText("1");
+            String countString = products.get(i).getAmount() + "";
+            pvh.countET.setText(countString);
 
-            if (products.get(i).hasImages()) {
-                Picasso.with(getContext()).load(new File(products.get(i).getImages().get(0).getImagePath())).resize(200,200).centerInside().into(pvh.prodImg);
+            //Set Images
+            if (products.get(i).getProduct().hasImages()) {
+                Picasso.with(getContext()).load(new File(products.get(i).getProduct().getImages().get(0).getImagePath())).resize(200,200).centerInside().into(pvh.prodImg);
             }
 
+            //Set button listeners
+            pvh.addBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    products.get(position).addAmount(1);
+                    String countString = "" + products.get(position).getAmount();
+                    pvhFinal.countET.setText(countString);
+                    calculateTotal();
+                }
+            });
+
+            pvh.minusBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    products.get(position).removeAmount(1);
+                    String countString = "" + products.get(position).getAmount();
+                    pvhFinal.countET.setText(countString);
+                    calculateTotal();
+                }
+            });
+
+            //Change count based on edit text
+            pvh.countET.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    if (pvhFinal.countET.getText().toString().isEmpty()) {
+                        products.get(position).setAmount(0);
+                    } else if (Integer.parseInt(pvhFinal.countET.getText().toString()) == 0) {
+                        products.remove(position);
+                        notifyDataSetChanged();
+                    } else {
+                        int amount = Integer.parseInt(pvhFinal.countET.getText().toString());
+                        products.get(position).setAmount(amount);
+                    }
+                    calculateTotal();
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
+
+            //Long press to delete
+            pvh.cv.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    products.remove(position);
+                    notifyDataSetChanged();
+                    calculateTotal();
+                    return false;
+                }
+            });
 
         }
 

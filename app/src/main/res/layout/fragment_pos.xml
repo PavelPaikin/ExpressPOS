@@ -24,7 +24,6 @@
         fab:layout_constraintLeft_toLeftOf="parent"
         fab:layout_constraintRight_toRightOf="parent"
         fab:layout_constraintTop_toTopOf="parent"
-        android:layout_marginBottom="0dp"
         fab:layout_constraintBottom_toTopOf="@+id/pos_bottomImg" />
 
     <com.github.clans.fab.FloatingActionMenu
@@ -94,7 +93,7 @@
 
     <ImageView
         android:id="@+id/pos_bottomImg"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="50dp"
         fab:layout_constraintBottom_toBottomOf="parent"
         fab:layout_constraintHorizontal_bias="0.0"
@@ -111,7 +110,8 @@
         android:layout_marginRight="8dp"
         fab:layout_constraintRight_toRightOf="parent"
         fab:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="0dp">
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp">
 
         <TextView
             android:id="@+id/pos_totalTV"

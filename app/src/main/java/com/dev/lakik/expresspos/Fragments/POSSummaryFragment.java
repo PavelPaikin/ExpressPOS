@@ -1,6 +1,7 @@
 package com.dev.lakik.expresspos.Fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dev.lakik.expresspos.Model.Product;
@@ -60,20 +62,73 @@ public class POSSummaryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             transaction = getArguments().getParcelable("transaction");
+            transaction.save();
         }
     }
 
     RecyclerView rv;
+    TextView subTV, taxTV, totalTV;
+    ImageView sendImg;
+
+    float subtotal, tax, total;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_possummary, container, false);
 
+        //Setup recyclerview
         rv = (RecyclerView) view.findViewById(R.id.summ_recyclerView);
         rv.setNestedScrollingEnabled(false);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         final RVAdapter adapter = new RVAdapter(transaction.getProducts());
         rv.setAdapter(adapter);
+
+        //Set bottom displays for numbers
+        subTV = (TextView) view.findViewById(R.id.summ_subNumTV);
+        taxTV = (TextView) view.findViewById(R.id.summ_taxNumTV);
+        totalTV = (TextView) view.findViewById(R.id.summ_totalNumTV);
+
+        subtotal = transaction.getSubTotal();
+        String subtotalStr = "$" + subtotal;
+        subTV.setText(subtotalStr);
+
+        tax = transaction.getTax();
+        String taxStr = "$" + tax;
+        taxTV.setText(taxStr);
+
+        total = transaction.getTotal();
+        String totalStr = "$" + total;
+        totalTV.setText(totalStr);
+
+        //Share intent to share the receipt
+
+        sendImg = (ImageView) view.findViewById(R.id.summ_sendImg);
+        sendImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String shareBody = "";
+
+                shareBody += "Date: " + transaction.getDate() + "\n\n";
+
+                for (TransactionProduct p : transaction.getProducts()) {
+                    if (p.getAmount() > 1) {
+                        shareBody += p.getAmount() + "x " + p.getProduct().getName() + " at $" + p.getPrice() + " = $" + (p.getPrice() * p.getAmount()) + "\n";
+                    } else {
+                        shareBody += p.getProduct().getName() + " = $" + p.getPrice() + "\n";
+                    }
+                }
+
+                shareBody += "\nSubtotal: $" + transaction.getSubTotal();
+                shareBody += "\nTax: $" + transaction.getTax();
+                shareBody += "\nTotal: $" + transaction.getTotal();
+
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Purchase $" + transaction.getTotal() + " on " + transaction.getDate());
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                startActivity(Intent.createChooser(sharingIntent, "Share using..."));
+            }
+        });
 
 
 
@@ -127,6 +182,8 @@ public class POSSummaryFragment extends Fragment {
             int unitCount = transProd.getAmount();
 
             pvh.prodNameTV.setText(prod.getName());
+
+            pvh.upcTV.setText(prod.getUpc());
 
             String countString = "x" + unitCount;
             pvh.countTV.setText(countString);
@@ -182,6 +239,6 @@ public class POSSummaryFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
-        void setToolbarTitle(String title);
+        //void setToolbarTitle(String title);
     }
 }
