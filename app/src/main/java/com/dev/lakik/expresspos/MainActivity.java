@@ -19,6 +19,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.dev.lakik.expresspos.Fragments.CreditsFragment;
+import com.dev.lakik.expresspos.SplashFragments.LoginFragment;
+import com.dev.lakik.expresspos.Fragments.POSPaymentFragment;
 import com.dev.lakik.expresspos.Fragments.POSSummaryFragment;
 import com.dev.lakik.expresspos.Fragments.SettingsFragment;
 
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity
         CreateProductFragment.OnFragmentInteractionListener,
         POSFragment.OnFragmentInteractionListener,
         POSSummaryFragment.OnFragmentInteractionListener,
+        POSPaymentFragment.OnFragmentInteractionListener,
         OrdersFragment.OnFragmentInteractionListener,
         FullScannerFragment.OnFragmentInteractionListener{
 
@@ -214,6 +217,18 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
         switch (uri.toString()){
+            case Const.SUMMARY_FRAGMENT_FROM_PAYMENT:
+                Transaction summTrans = ((POSPaymentFragment)currentFragment).getTransaction();
+                changeFragment(POSSummaryFragment.newInstance(summTrans), false);
+                appBarLayout.collapseToolbar();
+                toolbar.setTitle("Purchase Receipt");
+                break;
+            case Const.PAYMENT_FRAGMENT_FROM_POS:
+                Transaction payTrans = POSFragment.thisTrans;
+                changeFragment(POSPaymentFragment.newInstance(payTrans), false);
+                appBarLayout.collapseToolbar();
+                toolbar.setTitle("" + payTrans.getTotal());
+                break;
             case Const.CREATE_NEW_PRODUCT_FRAGMENT:
                 changeFragment(CreateProductFragment.newInstance(), true);
                 appBarLayout.collapseToolbar();

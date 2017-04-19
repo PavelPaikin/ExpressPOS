@@ -70,8 +70,16 @@ public class TransactionProduct extends TransactionProductHelper implements Parc
         this.amount++;
     }
 
+    public void addAmount(int amount) {
+        this.amount += amount;
+    }
+
     public void removeAmount(){
         this.amount--;
+    }
+
+    public void removeAmount(int amount) {
+        this.amount -= amount;
     }
 
     //delete curent item from table
