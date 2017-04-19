@@ -92,6 +92,7 @@ public class POSPaymentFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 transaction.save();
+                transaction.removeAllFromInventory();
                 mListener.onFragmentInteraction(Uri.parse(Const.SUMMARY_FRAGMENT_FROM_PAYMENT));
             }
         });

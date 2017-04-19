@@ -13,6 +13,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -98,10 +99,7 @@ public class MainActivity extends AppCompatActivity
         tvCompanyName = (TextView)hView.findViewById(R.id.tvCompanyName);
         tvCompanyEmail = (TextView)hView.findViewById(R.id.tvCompanyEmail);
 
-        Transaction transaction = new Transaction(Company.instance.getId(), new Date(), 0f, 0f, 0f);
-        transaction.save();
-
-        Transaction.getAllRecords(Company.instance.getId());
+        //Transaction.dropTable();
     }
 
     @Override
@@ -163,10 +161,12 @@ public class MainActivity extends AppCompatActivity
 
         switch (id){
             case R.id.nav_pos:
+                emptyBackStack();
                 changeFragment(POSFragment.newInstance(), false);
                 appBarLayout.collapseToolbar();
                 break;
             case R.id.nav_inventory:
+                emptyBackStack();
                 changeFragment(InventoryFragment.newInstance(), false);
                 appBarLayout.collapseToolbar();
                 break;
@@ -175,16 +175,19 @@ public class MainActivity extends AppCompatActivity
                 appBarLayout.collapseToolbar();
                 break;
             case R.id.nav_credits:
+                emptyBackStack();
                 changeFragment(new CreditsFragment(), false);
                 setToolbarTitle("Credits");
                 appBarLayout.collapseToolbar();
                 break;
             case R.id.nav_settings:
+                emptyBackStack();
                 changeFragment(new SettingsFragment(), false);
                 setToolbarTitle("Settings");
                 appBarLayout.collapseToolbar();
                 break;
             case R.id.nav_logout:
+                emptyBackStack();
                 company.removeAutoLogin();
                 company.saveOnDevice(this);
 
@@ -225,7 +228,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Const.PAYMENT_FRAGMENT_FROM_POS:
                 Transaction payTrans = POSFragment.thisTrans;
-                changeFragment(POSPaymentFragment.newInstance(payTrans), false);
+                changeFragment(POSPaymentFragment.newInstance(payTrans), true);
                 appBarLayout.collapseToolbar();
                 toolbar.setTitle("" + payTrans.getTotal());
                 break;
@@ -246,9 +249,7 @@ public class MainActivity extends AppCompatActivity
                 appBarLayout.collapseToolbar();
                 break;
             case Const.RELOAD_CREATE_PRODUCT:
-                if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-                    getSupportFragmentManager().popBackStack();
-                }
+                emptyBackStack();
                 Inventory inv = ((CreateProductFragment)currentFragment).getInventory();
                 boolean mode = ((CreateProductFragment)currentFragment).getEdit();
                 changeFragment(CreateProductFragment.newInstance(inv, mode), true);
@@ -256,6 +257,12 @@ public class MainActivity extends AppCompatActivity
 
                 break;
 
+        }
+    }
+
+    public void emptyBackStack(){
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
         }
     }
 

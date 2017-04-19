@@ -81,7 +81,7 @@ public class Product extends ProductHelper implements Parcelable {
         ContentValues cv = new ContentValues();
         
         cv.put(NAME_COLUMN_ID, this.id.toString());
-        cv.put(NAME_COLUMN_DESCRIPTION, this.company_id.toString());
+        cv.put(NAME_COLUMN_COMPANY_ID, this.company_id.toString());
         cv.put(NAME_COLUMN_NAME, this.name);
         cv.put(NAME_COLUMN_NUMBER, this.number);
         cv.put(NAME_COLUMN_UPC, this.upc);

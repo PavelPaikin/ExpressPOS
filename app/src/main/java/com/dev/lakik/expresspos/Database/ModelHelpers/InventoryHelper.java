@@ -117,8 +117,8 @@ public class InventoryHelper {
 
         //Cursor c = db.rawQuery("Select * from " + TABLE_NAME + " where " + NAME_COLUMN_ID + "= '" + id + "'", null);
         Cursor c = db.rawQuery(sql, null);
-        Log.d("dddd", c.getCount() + "");
-        logCursor(c);
+        //Log.d("dddd", c.getCount() + "");
+        //logCursor(c);
         if(c.getCount() != 0) {
             c.moveToFirst();
 

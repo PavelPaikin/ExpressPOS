@@ -85,13 +85,11 @@ public class Transaction extends TransactionHelper implements Parcelable {
         arrTransProducts = new ArrayList<>();
     }
 
-
-
     public void loadProducts(String companyID){
         this.arrTransProducts = TransactionProduct.getAllRecordsByID(id.toString(), companyID);
     }
 
-    public void addProduct(Product product){
+    public boolean addProduct(Product product){
         TransactionProduct trProduct = null;
 
         for(TransactionProduct tr : arrTransProducts){
@@ -101,10 +99,22 @@ public class Transaction extends TransactionHelper implements Parcelable {
         }
 
         if(trProduct == null){
-            trProduct = new TransactionProduct(product);
+            trProduct = new TransactionProduct(id.toString(), product);
             arrTransProducts.add(trProduct);
+            return true;
         }else{
-            trProduct.addAmount();
+            if(trProduct.addAmount()){
+                return true;
+            }else{
+                return false;
+            }
+
+        }
+    }
+
+    public void removeAllFromInventory(){
+        for(TransactionProduct tr : arrTransProducts){
+            tr.removeFromInventory();
         }
     }
 
@@ -130,6 +140,10 @@ public class Transaction extends TransactionHelper implements Parcelable {
 
         long id = db.replace(TABLE_NAME, null, cv);
         Log.d("DBHelper", "inserted id: " + id);
+
+        for(TransactionProduct tp : arrTransProducts){
+            tp.save();
+        }
     }
 
     //delete curent item from table
@@ -148,6 +162,10 @@ public class Transaction extends TransactionHelper implements Parcelable {
         sb.append(total + "");
 
         Log.d("ObjectFields", "Transaction: " + sb.toString());
+
+        for(TransactionProduct tp : arrTransProducts){
+            tp.printObject();
+        }
 
     }
 

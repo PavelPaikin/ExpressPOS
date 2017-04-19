@@ -76,20 +76,6 @@ public class OrdersFragment extends Fragment implements RecyclerItemClickListene
     public void onResume() {
         super.onResume();
 
-
-        /*arr = new ArrayList<>();
-        arr.add(new Transaction(Company.instance.getId(), new Date(), 10f, 2f, 55f));
-        arr.add(new Transaction(Company.instance.getId(), new Date(), 10f, 2f, 55f));
-        arr.add(new Transaction(Company.instance.getId(), new Date(), 10f, 2f, 55f));
-        arr.add(new Transaction(Company.instance.getId(), new Date(), 10f, 2f, 55f));
-        arr.add(new Transaction(Company.instance.getId(), new Date(), 10f, 2f, 55f));
-        arr.add(new Transaction(Company.instance.getId(), new Date(), 10f, 2f, 55f));
-        arr.add(new Transaction(Company.instance.getId(), new Date(), 10f, 2f, 55f));
-        arr.add(new Transaction(Company.instance.getId(), new Date(), 10f, 2f, 55f));
-        arr.add(new Transaction(Company.instance.getId(), new Date(), 10f, 2f, 55f));
-        arr.add(new Transaction(Company.instance.getId(), new Date(), 10f, 2f, 55f));
-**/
-
         arr = Transaction.getAllRecords(Company.instance.getId());
         mAdapter.setData(arr);
     }
