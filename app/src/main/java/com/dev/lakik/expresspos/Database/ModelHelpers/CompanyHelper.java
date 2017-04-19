@@ -85,7 +85,7 @@ public class CompanyHelper {
     }
 
     //Get item by id
-    public static Company get(String id){
+   /* public static Company get(String id){
         SQLiteDatabase db = DBHelper.Instance().getDB();
         Cursor c = db.rawQuery("Select * from " + TABLE_NAME + " where " + NAME_COLUMN_ID + "= '" + id + "'", null);
         if(c!=null) c.moveToFirst();
@@ -101,7 +101,48 @@ public class CompanyHelper {
         c.close();
         return item;
     }
+*/
+    public static Company get(String login){
+        SQLiteDatabase db = DBHelper.Instance().getDB();
+        Cursor c = db.rawQuery("Select * from " + TABLE_NAME + " where " + NAME_COLUMN_LOGIN + "= '" + login + "' LIMIT 1", null);
+        if(c.getCount() > 0) {
+            c.moveToFirst();
 
+            Company item = new Company();
+            item.setId(UUID.fromString(c.getString(c.getColumnIndex(NAME_COLUMN_ID))));
+            item.setName(c.getString(c.getColumnIndex(NAME_COLUMN_NAME)));
+            item.setLogin(c.getString(c.getColumnIndex(NAME_COLUMN_LOGIN)));
+            item.setPassword(c.getString(c.getColumnIndex(NAME_COLUMN_PASSWORD)));
+            item.setEmail(c.getString(c.getColumnIndex(NAME_COLUMN_EMAIL)));
+            item.setImagePath(c.getString(c.getColumnIndex(NAME_COLUMN_IMAGE_PATH)));
+
+            c.close();
+            return item;
+        }else{
+            return null;
+        }
+    }
+
+    public static Company getByID(String id){
+        SQLiteDatabase db = DBHelper.Instance().getDB();
+        Cursor c = db.rawQuery("Select * from " + TABLE_NAME + " where " + NAME_COLUMN_ID + "= '" + id + "' LIMIT 1", null);
+        if(c.getCount() > 0) {
+            c.moveToFirst();
+
+            Company item = new Company();
+            item.setId(UUID.fromString(c.getString(c.getColumnIndex(NAME_COLUMN_ID))));
+            item.setName(c.getString(c.getColumnIndex(NAME_COLUMN_NAME)));
+            item.setLogin(c.getString(c.getColumnIndex(NAME_COLUMN_LOGIN)));
+            item.setPassword(c.getString(c.getColumnIndex(NAME_COLUMN_PASSWORD)));
+            item.setEmail(c.getString(c.getColumnIndex(NAME_COLUMN_EMAIL)));
+            item.setImagePath(c.getString(c.getColumnIndex(NAME_COLUMN_IMAGE_PATH)));
+
+            c.close();
+            return item;
+        }else{
+            return null;
+        }
+    }
 
 
     public static void logCursor(Cursor c) {

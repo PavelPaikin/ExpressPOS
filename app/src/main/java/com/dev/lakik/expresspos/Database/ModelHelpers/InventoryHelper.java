@@ -24,6 +24,9 @@ public class InventoryHelper {
     public static String NAME_COLUMN_ID = "id";
     public static String TYPE_COLUMN_ID = "text";
 
+    public static String NAME_COLUMN_COMPANY_ID = "company_id";
+    public static String TYPE_COLUMN_COMPANY_ID = "text";
+
     public static String NAME_COLUMN_PRODUCT_ID = "product_id";
     public static String TYPE_COLUMN_PRODUCT_ID = "text";
 
@@ -40,6 +43,7 @@ public class InventoryHelper {
         sb.append(TABLE_NAME);
         sb.append(" (");
         sb.append(NAME_COLUMN_ID + " " + TYPE_COLUMN_ID + " primary key, ");
+        sb.append(NAME_COLUMN_COMPANY_ID + " " + TYPE_COLUMN_COMPANY_ID + ", ");
         sb.append(NAME_COLUMN_PRODUCT_ID + " " + TYPE_COLUMN_PRODUCT_ID + ", ");
         sb.append(NAME_COLUMN_AMOUNT + " " + TYPE_COLUMN_AMOUNT + ")");
 
@@ -54,28 +58,28 @@ public class InventoryHelper {
     }
 
     //Get all items and return Array list with all items
-    public static ArrayList<Inventory> getAllRecords(){
+    public static ArrayList<Inventory> getAllRecords(String companyID){
         SQLiteDatabase db = DBHelper.Instance().getDB();
 
         ArrayList<Inventory> tempArray = new ArrayList<>();
 
-        String sql = "SELECT Inventory.id as inventory_id, Inventory.amount, Product.*, ProductImage.imagePath, ProductImage.id as image_id " +
+        String sql = "SELECT Inventory.id as inventory_id, Inventory.company_id as companyId, Inventory.amount, Product.*, ProductImage.imagePath, ProductImage.id as image_id " +
                      "FROM Inventory " +
                      "INNER JOIN Product ON Inventory.product_id = Product.id " +
                      "LEFT JOIN ProductImage ON Inventory.product_id = ProductImage.product_id " +
-                     "WHERE Inventory.amount > 0 GROUP BY Inventory.id";
+                     "WHERE Inventory.company_id = '" + companyID + "' AND Inventory.amount > 0 GROUP BY Inventory.id ORDER BY Product.name";
 
         //Cursor c = db.rawQuery("Select "+ TABLE_NAME +".*, " + Product.TABLE_NAME +".* from " + TABLE_NAME + " where " + NAME_COLUMN_AMOUNT + "> 0", null);
         Cursor c = db.rawQuery(sql, null);
         //logCursor(c);
         while(c.moveToNext()){
-            Inventory item = new Inventory();
+            Inventory item = new Inventory(c.getString(c.getColumnIndex("companyId")));
             item.setId(UUID.fromString(c.getString(c.getColumnIndex("inventory_id"))));
             item.setProduct_id(UUID.fromString(c.getString(c.getColumnIndex("id"))));
             item.setAmount(c.getInt(c.getColumnIndex("amount")));
 
-            Product product = new Product();
-            product.setId(UUID.fromString(c.getString(c.getColumnIndex("id"))));
+            Product product = new Product(companyID);
+            product.setId(c.getString(c.getColumnIndex("id")));
             product.setName(c.getString(c.getColumnIndex("name")));
             product.setUpc(c.getString(c.getColumnIndex("upc")));
             product.setNumber(c.getString(c.getColumnIndex("number")));
@@ -102,14 +106,14 @@ public class InventoryHelper {
     }
 
     //Get item by id
-    public static Inventory get(String upc){
+    public static Inventory get(String upc, String companyID){
         SQLiteDatabase db = DBHelper.Instance().getDB();
 
-        String sql = "SELECT Inventory.id as inventory_id, Inventory.amount, Product.*, ProductImage.imagePath, ProductImage.id as image_id  " +
+        String sql = "SELECT Inventory.id as inventory_id, Inventory.company_id as companyId, Inventory.amount, Product.*, ProductImage.imagePath, ProductImage.id as image_id  " +
                      "FROM Inventory " +
                      "INNER JOIN Product ON Inventory.product_id = Product.id " +
                      "LEFT JOIN ProductImage ON Inventory.product_id = ProductImage.product_id " +
-                     "WHERE Product.upc = '" + upc + "' GROUP BY Inventory.id";
+                     "WHERE Product.upc = '" + upc + "' AND Inventory.company_id = '" + companyID + "' GROUP BY Inventory.id";
 
         //Cursor c = db.rawQuery("Select * from " + TABLE_NAME + " where " + NAME_COLUMN_ID + "= '" + id + "'", null);
         Cursor c = db.rawQuery(sql, null);
@@ -118,13 +122,13 @@ public class InventoryHelper {
         if(c.getCount() != 0) {
             c.moveToFirst();
 
-            Inventory item = new Inventory();
+            Inventory item = new Inventory(c.getString(c.getColumnIndex("companyId")));
             item.setId(UUID.fromString(c.getString(c.getColumnIndex("inventory_id"))));
             item.setProduct_id(UUID.fromString(c.getString(c.getColumnIndex("id"))));
             item.setAmount(c.getInt(c.getColumnIndex("amount")));
 
-            Product product = new Product();
-            product.setId(UUID.fromString(c.getString(c.getColumnIndex("id"))));
+            Product product = new Product(companyID);
+            product.setId(c.getString(c.getColumnIndex("id")));
             product.setName(c.getString(c.getColumnIndex("name")));
             product.setUpc(c.getString(c.getColumnIndex("upc")));
             product.setNumber(c.getString(c.getColumnIndex("number")));

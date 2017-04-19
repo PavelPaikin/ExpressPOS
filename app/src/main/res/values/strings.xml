@@ -35,5 +35,11 @@
     <string name="allow_editing">Allow Editing</string>
     <string name="allow_editing_description">Allow to edit existion products in inventory</string>
 
+    <string name="company_name">Company Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="repassword">Repeat Password</string>
+    <string name="create_account">Create Account</string>
+
 
 </resources>

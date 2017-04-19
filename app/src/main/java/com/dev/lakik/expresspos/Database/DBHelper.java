@@ -9,6 +9,8 @@ import com.dev.lakik.expresspos.Model.Company;
 import com.dev.lakik.expresspos.Model.Inventory;
 import com.dev.lakik.expresspos.Model.Product;
 import com.dev.lakik.expresspos.Model.ProductImage;
+import com.dev.lakik.expresspos.Model.Transaction;
+import com.dev.lakik.expresspos.Model.TransactionProduct;
 
 
 public class DBHelper extends SQLiteOpenHelper {
@@ -38,6 +40,8 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(Inventory.getCreateQuery());
         db.execSQL(Product.getCreateQuery());
         db.execSQL(ProductImage.getCreateQuery());
+        db.execSQL(Transaction.getCreateQuery());
+        db.execSQL(TransactionProduct.getCreateQuery());
     }
 
     @Override

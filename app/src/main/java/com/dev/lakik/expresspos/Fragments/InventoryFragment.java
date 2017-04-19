@@ -20,6 +20,7 @@ import android.widget.ListView;
 
 import com.dev.lakik.expresspos.Adapters.InventoryAdapter;
 import com.dev.lakik.expresspos.Listeners.RecyclerItemClickListener;
+import com.dev.lakik.expresspos.Model.Company;
 import com.dev.lakik.expresspos.Model.Const;
 import com.dev.lakik.expresspos.Model.Inventory;
 import com.dev.lakik.expresspos.Model.Product;
@@ -95,6 +96,8 @@ public class InventoryFragment extends Fragment implements RecyclerItemClickList
         }
 
         mListener.setToolbarTitle("Inventory");
+
+        Company.instance.printObject();
     }
 
     @Override
@@ -117,7 +120,7 @@ public class InventoryFragment extends Fragment implements RecyclerItemClickList
     public void onResume() {
         super.onResume();
 
-        mAdapter.setData(Inventory.getAllRecords());
+        mAdapter.setData(Inventory.getAllRecords(Company.instance.getId()));
     }
 
     @Override

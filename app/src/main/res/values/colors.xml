@@ -10,4 +10,7 @@
     <color name="colorSecondaryText">#757575</color>
     <color name="colorDevider">#BDBDBD</color>
     <color name="no_product_background">#eeeeee</color>
+
+    <color name="logo_color_main">#FF6C28</color>
+    <color name="logo_color_second">#051D38</color>
 </resources>
