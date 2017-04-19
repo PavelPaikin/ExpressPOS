@@ -82,20 +82,6 @@ public class POSFragment extends Fragment {
     }
 
     /*
-        Basic product information meant to be used for the receipt
-        Contains the product price, number purchased, and product ID
-     */
-    ArrayList<TransactionProduct> transactionProdArray = new ArrayList<>();
-
-    /*
-        Contains products that are added to the transaction, but only temporarily
-        This is meant to populate the cardview, but should not be referenced for the price in the log of the transaction
-        This should only be used for the product name after the transaction is submitted, using the product ID stored in the transactionProdArray
-            to get the product name, UPC etc, since the product's price is likely to change frequently
-     */
-    ArrayList<Product> prodArray = new ArrayList<>();
-
-    /*
         Contains the current inventory information
         Holds an array of products that represent the items which are currently available to add to the transaction
      */
@@ -109,7 +95,7 @@ public class POSFragment extends Fragment {
 
     Button submitBtn;
 
-    Transaction thisTrans;
+    public static Transaction thisTrans;
 
     double subtotal;
 
@@ -122,7 +108,7 @@ public class POSFragment extends Fragment {
         totalNumTV = (TextView) view.findViewById(R.id.pos_totalNumTV);
 
         inventoryArray = Inventory.getAllRecords(Company.instance.getId());//Populate the inventory array from the database
-        thisTrans = new Transaction();
+        thisTrans = new Transaction(Company.instance.getId());
 
         //RecyclerView for the product CardView
         rv = (RecyclerView) view.findViewById(R.id.pos_recyclerView);
@@ -199,14 +185,6 @@ public class POSFragment extends Fragment {
                 tTax = (float) round(subtotal * tax, 2);
                 tTotal = (float) round(subtotal * (1 + tax), 2);
 
-//                Transaction newTrans = new Transaction(Company.instance.getId(), "Today", tSub, tTax, tTotal);
-//                newTrans.save();
-//
-//                for (Product item : prodArray) {
-//                    TransactionProduct transProduct = new TransactionProduct(newTrans.getId(), Company.instance.getId(), item.getId(), (float) item.getPrice(), 1);
-//                    transProduct.save();
-//                    transactionProdArray.add(transProduct);
-//                }
 
                 thisTrans.setSubTotal(tSub);
                 thisTrans.setTax(tTax);

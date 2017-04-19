@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.dev.lakik.expresspos.Model.Company;
 import com.dev.lakik.expresspos.Model.Const;
 import com.dev.lakik.expresspos.Model.Transaction;
 import com.dev.lakik.expresspos.R;
@@ -53,7 +54,7 @@ public class POSPaymentFragment extends Fragment {
         }
 
         if (transaction == null) {
-            transaction = new Transaction();
+            transaction = new Transaction(Company.instance.getId());
         }
     }
 
@@ -90,6 +91,7 @@ public class POSPaymentFragment extends Fragment {
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                transaction.save();
                 mListener.onFragmentInteraction(Uri.parse(Const.SUMMARY_FRAGMENT_FROM_PAYMENT));
             }
         });

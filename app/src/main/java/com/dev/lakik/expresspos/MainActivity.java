@@ -19,7 +19,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.dev.lakik.expresspos.Fragments.CreditsFragment;
-import com.dev.lakik.expresspos.Fragments.LoginFragment;
+import com.dev.lakik.expresspos.SplashFragments.LoginFragment;
 import com.dev.lakik.expresspos.Fragments.POSPaymentFragment;
 import com.dev.lakik.expresspos.Fragments.POSSummaryFragment;
 import com.dev.lakik.expresspos.Fragments.SettingsFragment;
@@ -224,7 +224,7 @@ public class MainActivity extends AppCompatActivity
                 toolbar.setTitle("Purchase Receipt");
                 break;
             case Const.PAYMENT_FRAGMENT_FROM_POS:
-                Transaction payTrans = ((POSFragment)currentFragment).getTransaction();
+                Transaction payTrans = POSFragment.thisTrans;
                 changeFragment(POSPaymentFragment.newInstance(payTrans), false);
                 appBarLayout.collapseToolbar();
                 toolbar.setTitle("" + payTrans.getTotal());

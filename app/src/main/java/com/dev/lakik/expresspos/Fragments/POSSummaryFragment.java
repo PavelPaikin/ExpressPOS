@@ -62,7 +62,6 @@ public class POSSummaryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             transaction = getArguments().getParcelable("transaction");
-            transaction.save();
         }
     }
 
