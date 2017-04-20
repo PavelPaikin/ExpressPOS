@@ -40,7 +40,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.ViewHolder
         holder.tvNumber.setText(String.valueOf(getItemCount() - position));
         holder.tvDate.setText(dateFormat.format(mDataset.get(position).getDate()));
         holder.tvItemSold.setText(String.valueOf(mDataset.get(position).getProductsCount()));
-        holder.tvTotal.setText(String.format(Locale.CANADA, "%.2f$", mDataset.get(position).getTotal()));
+        holder.tvTotal.setText(String.format(Locale.CANADA, "$%.2f", mDataset.get(position).getTotal()));
 
     }
 

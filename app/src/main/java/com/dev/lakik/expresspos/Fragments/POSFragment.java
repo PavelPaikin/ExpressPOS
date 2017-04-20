@@ -387,8 +387,14 @@ public class POSFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     products.get(position).removeAmount(1);
-                    String countString = "" + products.get(position).getAmount();
-                    pvhFinal.countET.setText(countString);
+                    if (products.get(position).getAmount() > 0) {
+                        String countString = "" + products.get(position).getAmount();
+                        pvhFinal.countET.setText(countString);
+                    } else {
+                        products.remove(position);
+                        notifyDataSetChanged();
+                        calculateTotal();
+                    }
                     calculateTotal();
                 }
             });
