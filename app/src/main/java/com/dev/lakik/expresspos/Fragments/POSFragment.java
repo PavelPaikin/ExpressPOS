@@ -371,13 +371,17 @@ public class POSFragment extends Fragment {
             //Set Images
             if (products.get(i).getProduct().hasImages()) {
                 Picasso.with(getContext()).load(new File(products.get(i).getProduct().getImages().get(0).getImagePath())).resize(200,200).centerInside().into(pvh.prodImg);
+            }else{
+                Picasso.with(getContext()).load(R.drawable.no_product).resize(200,200).centerInside().into(pvh.prodImg);
             }
 
             //Set button listeners
             pvh.addBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    products.get(position).addAmount(1);
+                    if(!products.get(position).addAmount()){
+                        Toast.makeText(getContext(), "No enough product in inventory", Toast.LENGTH_SHORT).show();
+                    }
                     String countString = "" + products.get(position).getAmount();
                     pvhFinal.countET.setText(countString);
                     calculateTotal();
