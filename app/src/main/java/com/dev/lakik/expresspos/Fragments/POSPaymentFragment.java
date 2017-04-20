@@ -16,10 +16,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.dev.lakik.expresspos.Helpers.InputValidationHelper;
 import com.dev.lakik.expresspos.Model.Company;
 import com.dev.lakik.expresspos.Model.Const;
 import com.dev.lakik.expresspos.Model.Transaction;
 import com.dev.lakik.expresspos.R;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -60,8 +63,12 @@ public class POSPaymentFragment extends Fragment {
 
     private Transaction transaction;
 
+    InputValidationHelper validator;
+
     EditText nameET, cardNumberET, monthET, yearET, cvvET;
     TextInputLayout nameETWrap, cardNumberETWrap, monthETWrap, yearETWrap, cvvETWrap;
+
+    ArrayList<TextInputLayout> wrapList;
 
     ImageView brandImg;
 
@@ -79,7 +86,21 @@ public class POSPaymentFragment extends Fragment {
         nameET = (EditText) view.findViewById(R.id.pay_nameET);
 
         cardNumberET = (EditText) view.findViewById(R.id.pay_cardNumberET);
+
+        nameETWrap = (TextInputLayout) view.findViewById(R.id.pay_nameETWrap);
         cardNumberETWrap = (TextInputLayout) view.findViewById(R.id.pay_cardNumberETWrap);
+        monthETWrap = (TextInputLayout) view.findViewById(R.id.pay_monthETWrap);
+        yearETWrap = (TextInputLayout) view.findViewById(R.id.pay_yearETWrap);
+        cvvETWrap = (TextInputLayout) view.findViewById(R.id.pay_cvvETWrap);
+
+        wrapList = new ArrayList<>();
+        wrapList.add(nameETWrap);
+        wrapList.add(cardNumberETWrap);
+        wrapList.add(monthETWrap);
+        wrapList.add(yearETWrap);
+        wrapList.add(cvvETWrap);
+
+
 
         monthET = (EditText) view.findViewById(R.id.pay_monthET);
         yearET = (EditText) view.findViewById(R.id.pay_yearET);
@@ -91,9 +112,28 @@ public class POSPaymentFragment extends Fragment {
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                transaction.save();
-                transaction.removeAllFromInventory();
-                mListener.onFragmentInteraction(Uri.parse(Const.SUMMARY_FRAGMENT_FROM_PAYMENT));
+                boolean validEntry = true;
+
+                for (TextInputLayout wrap : wrapList) {
+                    if (wrap.getEditText().getText().toString().equals("")) {
+                        wrap.setErrorEnabled(true);
+                        wrap.setError("Field must be filled");
+                        validEntry = false;
+                    } else {
+                        wrap.setErrorEnabled(false);
+                    }
+                }
+
+                if (cardNumberET.getText().toString().length() < 16) {
+                    cardNumberETWrap.setErrorEnabled(true);
+                    cardNumberETWrap.setError("Card number must be at least 16 digits");
+                }
+
+                if (validEntry) {
+                    transaction.save();
+                    transaction.removeAllFromInventory();
+                    mListener.onFragmentInteraction(Uri.parse(Const.SUMMARY_FRAGMENT_FROM_PAYMENT));
+                }
             }
         });
 
@@ -132,6 +172,8 @@ public class POSPaymentFragment extends Fragment {
 
             }
 
+
+
             @Override
             public void afterTextChanged(Editable editable) {
 
@@ -139,6 +181,80 @@ public class POSPaymentFragment extends Fragment {
         });
 
 
+        cvvET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String tempNum = cvvET.getText().toString();
+                if (tempNum.length() > 4) {
+                    tempNum = tempNum.substring(0, tempNum.length() - 1);
+                    cvvET.setText(tempNum);
+                    cvvET.setSelection(tempNum.length());
+                    cvvETWrap.setError("Must be no more than 4 digits");
+                } else {
+                    cvvETWrap.setErrorEnabled(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        monthET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String tempNum = monthET.getText().toString();
+                if (tempNum.length() > 2) {
+                    tempNum = tempNum.substring(0, tempNum.length() - 1);
+                    monthET.setText(tempNum);
+                    monthET.setSelection(tempNum.length());
+                    monthETWrap.setError("Must be no more than 2 digits");
+                } else {
+                    monthETWrap.setErrorEnabled(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        yearET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String tempNum = yearET.getText().toString();
+                if (tempNum.length() > 4) {
+                    tempNum = tempNum.substring(0, tempNum.length() - 1);
+                    yearET.setText(tempNum);
+                    yearET.setSelection(tempNum.length());
+                    yearETWrap.setError("Must be no more than 4 digits");
+                } else {
+                    yearETWrap.setErrorEnabled(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
 
         return view;
     }

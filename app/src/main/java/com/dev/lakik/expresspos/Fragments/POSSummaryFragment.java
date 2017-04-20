@@ -20,6 +20,8 @@ import com.dev.lakik.expresspos.Model.Transaction;
 import com.dev.lakik.expresspos.Model.TransactionProduct;
 import com.dev.lakik.expresspos.R;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 
 /**
@@ -111,9 +113,9 @@ public class POSSummaryFragment extends Fragment {
 
                 for (TransactionProduct p : transaction.getProducts()) {
                     if (p.getAmount() > 1) {
-                        shareBody += p.getAmount() + "x " + p.getProduct().getName() + " at $" + p.getPrice() + " = $" + (p.getPrice() * p.getAmount()) + "\n";
+                        shareBody += p.getAmount() + "x " + p.getProduct().getName() + " at $" + round(p.getPrice(), 2) + " = $" + round(p.getPrice() * p.getAmount(), 2) + "\n";
                     } else {
-                        shareBody += p.getProduct().getName() + " = $" + p.getPrice() + "\n";
+                        shareBody += p.getProduct().getName() + " = $" + round(p.getPrice(), 2) + "\n";
                     }
                 }
 
@@ -187,10 +189,10 @@ public class POSSummaryFragment extends Fragment {
             String countString = "x" + unitCount;
             pvh.countTV.setText(countString);
 
-            String unitPriceString = "$" + unitPrice;
+            String unitPriceString = "$" + round(unitPrice, 2);
             pvh.unitPriceTV.setText(unitPriceString);
 
-            String totalPriceString = "= $" + (unitPrice * unitCount);
+            String totalPriceString = "= $" + round(unitPrice * unitCount, 2);
             pvh.totalPriceTV.setText(totalPriceString);
 
         }
@@ -202,7 +204,16 @@ public class POSSummaryFragment extends Fragment {
 
     }
 
+    /*
+        From: http://stackoverflow.com/a/2808648
+     */
+    public double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
 
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {

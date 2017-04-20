@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -328,7 +329,7 @@ public class POSFragment extends Fragment {
             ImageView prodImg;
             TextView prodName, prodUPC, prodPrice;
             Button addBtn, minusBtn;
-            EditText countET;
+            TextView countET;
 
             ProductViewHolder(View itemView) {
                 super(itemView);
@@ -339,7 +340,7 @@ public class POSFragment extends Fragment {
                 prodPrice = (TextView) itemView.findViewById(R.id.pos_prodPrice);
                 addBtn = (Button) itemView.findViewById(R.id.pos_addBtn);
                 minusBtn = (Button) itemView.findViewById(R.id.pos_minusBtn);
-                countET = (EditText) itemView.findViewById(R.id.pos_countET);
+                countET = (TextView) itemView.findViewById(R.id.pos_countET);
             }
         }
 
@@ -387,36 +388,15 @@ public class POSFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     products.get(position).removeAmount(1);
-                    String countString = "" + products.get(position).getAmount();
-                    pvhFinal.countET.setText(countString);
-                    calculateTotal();
-                }
-            });
-
-            //Change count based on edit text
-            pvh.countET.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    if (pvhFinal.countET.getText().toString().isEmpty()) {
-                        products.get(position).setAmount(0);
-                    } else if (Integer.parseInt(pvhFinal.countET.getText().toString()) == 0) {
+                    if (products.get(position).getAmount() > 0) {
+                        String countString = "" + products.get(position).getAmount();
+                        pvhFinal.countET.setText(countString);
+                    } else {
                         products.remove(position);
                         notifyDataSetChanged();
-                    } else {
-                        int amount = Integer.parseInt(pvhFinal.countET.getText().toString());
-                        products.get(position).setAmount(amount);
+                        calculateTotal();
                     }
                     calculateTotal();
-                }
-
-                @Override
-                public void afterTextChanged(Editable editable) {
-
                 }
             });
 
