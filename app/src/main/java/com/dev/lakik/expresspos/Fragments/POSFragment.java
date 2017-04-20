@@ -236,11 +236,15 @@ public class POSFragment extends Fragment {
 
     public void addProduct(Product product){
         //prodArray.add(product);
-        if(!thisTrans.addProduct(product)){
-            Toast.makeText(getContext(), "No enough product in inventory", Toast.LENGTH_SHORT).show();
+        if(product!=null) {
+            if (!thisTrans.addProduct(product)) {
+                Toast.makeText(getContext(), "No enough product in inventory", Toast.LENGTH_SHORT).show();
+            }
+            calculateTotal();
+            famPOS.close(true);
+        }else{
+            Toast.makeText(getContext(), "Product is not exist", Toast.LENGTH_SHORT).show();
         }
-        calculateTotal();
-        famPOS.close(true);
     }
 
     /*

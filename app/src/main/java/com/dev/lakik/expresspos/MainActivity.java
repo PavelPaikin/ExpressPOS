@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dev.lakik.expresspos.Fragments.CreditsFragment;
 import com.dev.lakik.expresspos.SplashFragments.LoginFragment;
@@ -324,7 +325,11 @@ public class MainActivity extends AppCompatActivity
             getSupportFragmentManager().popBackStack();
 
             Inventory inv = Inventory.get(barcode, company.getId());
-            ((POSFragment)currentFragment).addProduct(inv.getProduct());
+            if(inv != null) {
+                ((POSFragment) currentFragment).addProduct(inv.getProduct());
+            }else{
+                Toast.makeText(this, "Product is not exist", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
