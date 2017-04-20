@@ -70,12 +70,12 @@ public class CompanyHelper {
         Cursor c = db.query(TABLE_NAME, null, null, null, null, null, NAME_COLUMN_ID + " DESC");
         while(c.moveToNext()){
             Company item = new Company();
-            item.setId(UUID.fromString(c.getString(0)));
-            item.setName(c.getString(1));
-            item.setLogin(c.getString(2));
-            item.setPassword(c.getString(3));
-            item.setEmail(c.getString(4));
-            item.setImagePath(c.getString(5));
+            item.setId(UUID.fromString(c.getString(c.getColumnIndex(NAME_COLUMN_ID))));
+            item.setName(c.getString(c.getColumnIndex(NAME_COLUMN_NAME)));
+            item.setLogin(c.getString(c.getColumnIndex(NAME_COLUMN_LOGIN)));
+            item.setPassword(c.getString(c.getColumnIndex(NAME_COLUMN_PASSWORD)));
+            item.setEmail(c.getString(c.getColumnIndex(NAME_COLUMN_EMAIL)));
+            item.setImagePath(c.getString(c.getColumnIndex(NAME_COLUMN_IMAGE_PATH)));
 
             tempArray.add(item);
         }
@@ -85,22 +85,65 @@ public class CompanyHelper {
     }
 
     //Get item by id
-    public static Company get(String id){
+   /* public static Company get(String id){
         SQLiteDatabase db = DBHelper.Instance().getDB();
         Cursor c = db.rawQuery("Select * from " + TABLE_NAME + " where " + NAME_COLUMN_ID + "= '" + id + "'", null);
         if(c!=null) c.moveToFirst();
 
         Company item = new Company();
-        item.setId(UUID.fromString(c.getString(0)));
-        item.setName(c.getString(1));
-        item.setLogin(c.getString(2));
-        item.setPassword(c.getString(3));
-        item.setEmail(c.getString(4));
-        item.setImagePath(c.getString(5));
+        item.setId(UUID.fromString(c.getString(c.getColumnIndex(NAME_COLUMN_ID))));
+        item.setName(c.getString(c.getColumnIndex(NAME_COLUMN_NAME)));
+        item.setLogin(c.getString(c.getColumnIndex(NAME_COLUMN_LOGIN)));
+        item.setPassword(c.getString(c.getColumnIndex(NAME_COLUMN_PASSWORD)));
+        item.setEmail(c.getString(c.getColumnIndex(NAME_COLUMN_EMAIL)));
+        item.setImagePath(c.getString(c.getColumnIndex(NAME_COLUMN_IMAGE_PATH)));
 
         c.close();
         return item;
     }
+*/
+    public static Company get(String login){
+        SQLiteDatabase db = DBHelper.Instance().getDB();
+        Cursor c = db.rawQuery("Select * from " + TABLE_NAME + " where " + NAME_COLUMN_LOGIN + "= '" + login + "' LIMIT 1", null);
+        if(c.getCount() > 0) {
+            c.moveToFirst();
+
+            Company item = new Company();
+            item.setId(UUID.fromString(c.getString(c.getColumnIndex(NAME_COLUMN_ID))));
+            item.setName(c.getString(c.getColumnIndex(NAME_COLUMN_NAME)));
+            item.setLogin(c.getString(c.getColumnIndex(NAME_COLUMN_LOGIN)));
+            item.setPassword(c.getString(c.getColumnIndex(NAME_COLUMN_PASSWORD)));
+            item.setEmail(c.getString(c.getColumnIndex(NAME_COLUMN_EMAIL)));
+            item.setImagePath(c.getString(c.getColumnIndex(NAME_COLUMN_IMAGE_PATH)));
+
+            c.close();
+            return item;
+        }else{
+            return null;
+        }
+    }
+
+    public static Company getByID(String id){
+        SQLiteDatabase db = DBHelper.Instance().getDB();
+        Cursor c = db.rawQuery("Select * from " + TABLE_NAME + " where " + NAME_COLUMN_ID + "= '" + id + "' LIMIT 1", null);
+        if(c.getCount() > 0) {
+            c.moveToFirst();
+
+            Company item = new Company();
+            item.setId(UUID.fromString(c.getString(c.getColumnIndex(NAME_COLUMN_ID))));
+            item.setName(c.getString(c.getColumnIndex(NAME_COLUMN_NAME)));
+            item.setLogin(c.getString(c.getColumnIndex(NAME_COLUMN_LOGIN)));
+            item.setPassword(c.getString(c.getColumnIndex(NAME_COLUMN_PASSWORD)));
+            item.setEmail(c.getString(c.getColumnIndex(NAME_COLUMN_EMAIL)));
+            item.setImagePath(c.getString(c.getColumnIndex(NAME_COLUMN_IMAGE_PATH)));
+
+            c.close();
+            return item;
+        }else{
+            return null;
+        }
+    }
+
 
     public static void logCursor(Cursor c) {
         if (c != null) {

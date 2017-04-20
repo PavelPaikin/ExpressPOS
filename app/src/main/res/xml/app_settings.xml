@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/settings_category_pos"
+        android:key="pref_key_storage_settings">
+
+        <EditTextPreference
+            android:id="@+id/etTaxValue"
+            android:defaultValue="13"
+            android:inputType="numberDecimal"
+            android:key="key_tax_value"
+            android:numeric="decimal"
+            android:selectAllOnFocus="true"
+            app:summary="@string/tax_value_description"
+            app:title="@string/tax_value" />
+
+        <CheckBoxPreference
+
+            android:id="@+id/chShowListButton"
+            app:defaultValue="true"
+            app:key="key_show_list_button"
+            app:summary="@string/show_pick_list_button_description"
+            app:title="@string/show_pick_list_button" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/settings_category_inventory"
+        android:key="pref_key_storage_settings">
+
+        <CheckBoxPreference
+
+            android:id="@+id/chAllowEditing"
+            app:defaultValue="true"
+            app:key="key_allow_editing"
+            app:summary="@string/allow_editing_description"
+            app:title="@string/allow_editing" />
+
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -1,0 +1,113 @@
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.dev.lakik.expresspos.Fragments.POSSummaryFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/summ_recyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/summ_backgroundImg"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <ImageView
+        android:id="@+id/summ_backgroundImg"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:srcCompat="@color/colorPrimary" />
+
+    <TextView
+        android:id="@+id/summ_subTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Subtotal:"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/summ_backgroundImg" />
+
+    <TextView
+        android:id="@+id/summ_taxTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Tax:"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="@+id/summ_backgroundImg"
+        app:layout_constraintTop_toBottomOf="@+id/summ_subTV" />
+
+    <TextView
+        android:id="@+id/summ_totalTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Total:"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/summ_taxTV" />
+
+    <TextView
+        android:id="@+id/summ_subNumTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="0dp"
+        android:text="$1.99"
+        android:textSize="18sp"
+        app:layout_constraintLeft_toRightOf="@+id/summ_subTV"
+        app:layout_constraintTop_toTopOf="@+id/summ_subTV" />
+
+    <TextView
+        android:id="@+id/summ_taxNumTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="0dp"
+        android:text="$0.27"
+        android:textSize="18sp"
+        app:layout_constraintLeft_toRightOf="@+id/summ_taxTV"
+        app:layout_constraintTop_toTopOf="@+id/summ_taxTV" />
+
+    <TextView
+        android:id="@+id/summ_totalNumTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="0dp"
+        android:text="$2.26"
+        android:textSize="18sp"
+        app:layout_constraintLeft_toRightOf="@+id/summ_totalTV"
+        app:layout_constraintTop_toTopOf="@+id/summ_totalTV" />
+
+    <ImageView
+        android:id="@+id/summ_sendImg"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginTop="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/summ_backgroundImg"
+        app:layout_constraintRight_toRightOf="@+id/summ_backgroundImg"
+        app:layout_constraintTop_toTopOf="@+id/summ_backgroundImg"
+        app:srcCompat="@drawable/ic_menu_share" />
+
+</android.support.constraint.ConstraintLayout>
