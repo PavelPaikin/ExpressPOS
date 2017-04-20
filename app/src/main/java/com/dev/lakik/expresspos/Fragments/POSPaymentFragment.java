@@ -10,11 +10,15 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.dev.lakik.expresspos.Helpers.InputValidationHelper;
 import com.dev.lakik.expresspos.Model.Company;
@@ -80,6 +84,7 @@ public class POSPaymentFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_pospayment, container, false);
 
 
@@ -291,6 +296,47 @@ public class POSPaymentFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    //Submit button menu
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.create_product_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_submit) {
+            boolean validEntry = true;
+
+            for (TextInputLayout wrap : wrapList) {
+                if (wrap.getEditText().getText().toString().equals("")) {
+                    wrap.setErrorEnabled(true);
+                    wrap.setError("Field must be filled");
+                    validEntry = false;
+                } else {
+                    wrap.setErrorEnabled(false);
+                }
+            }
+
+            if (cardNumberET.getText().toString().length() < 16) {
+                cardNumberETWrap.setErrorEnabled(true);
+                cardNumberETWrap.setError("Card number must be at least 16 digits");
+            }
+
+            if (validEntry) {
+                transaction.save();
+                transaction.removeAllFromInventory();
+                mListener.onFragmentInteraction(Uri.parse(Const.SUMMARY_FRAGMENT_FROM_PAYMENT));
+            }
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     /**

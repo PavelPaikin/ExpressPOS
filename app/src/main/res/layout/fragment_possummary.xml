@@ -108,6 +108,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/summ_backgroundImg"
         app:layout_constraintRight_toRightOf="@+id/summ_backgroundImg"
         app:layout_constraintTop_toTopOf="@+id/summ_backgroundImg"
-        app:srcCompat="@drawable/ic_menu_send" />
+        app:srcCompat="@drawable/ic_menu_share" />
 
 </android.support.constraint.ConstraintLayout>
